@@ -1,0 +1,44 @@
+{
+	"name": "@turnazos/user_service",
+	"version": "1.0.0",
+	"description": "This is the user service of turnazos",
+	"main": "index.js",
+	"scripts": {
+		"start": "node ./dist/src/server",
+		"dev": "nodemon ./src/server.ts",
+		"build": "tsc",
+		"prepare": "husky install",
+		"test": "node",
+		"cm": "cz"
+	},
+	"dependencies": {
+		"express": "^4.17.3"
+	},
+	"devDependencies": {
+		"@commitlint/cli": "^16.2.3",
+		"@commitlint/config-conventional": "^16.2.1",
+		"@types/express": "^4.17.13",
+		"@types/express-serve-static-core": "^4.17.28",
+		"@typescript-eslint/eslint-plugin": "^5.17.0",
+		"@typescript-eslint/parser": "^5.17.0",
+		"commitizen": "^4.2.4",
+		"cz-conventional-changelog": "3.3.0",
+		"devmoji": "^2.3.0",
+		"eslint": "^8.12.0",
+		"eslint-plugin-import": "^2.25.4",
+		"husky": "^7.0.4",
+		"lint-staged": "^12.3.7",
+		"nodemon": "^2.0.15",
+		"prettier": "^2.6.1",
+		"semantic-release": "^19.0.2",
+		"ts-node": "^10.7.0",
+		"typescript": "^4.6.3"
+	},
+	"author": "myself",
+	"license": "ISC",
+	"config": {
+		"commitizen": {
+			"path": "./node_modules/cz-conventional-changelog"
+		}
+	}
+}
