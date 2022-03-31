@@ -1,11 +1,13 @@
+import { ENV_VARS } from "./config/env";
 import express from "express";
+import { loaders } from "./loaders";
 
-const app = express();
+const startServer = async () => {
+	const PORT = ENV_VARS.PORT || 5000;
+	const app = express();
+	await loaders(app);
 
-const PORT = 5000;
+	app.listen(PORT, () => console.log(`server listening on port ${PORT}`));
+};
 
-app.get("/", (req, res) => {
-	return res.send("Hello world!");
-});
-
-app.listen(PORT, () => console.log("app listening on port 5000"));
+startServer();
