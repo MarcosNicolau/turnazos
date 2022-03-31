@@ -1,0 +1,27 @@
+# Run this docker-compose if you are only going to be working with this service
+services:
+  redis:
+    image: bitnami/redis
+    env_file:
+      - .env
+    volumes:
+      - ~/turnazos/back_end/dbs_data/user_redis:/bitnami/redis/data
+    ports:
+      - 6379:6379
+  postgres:
+    image: postgres
+    restart: always
+    volumes:
+      - ~/turnazos/back_end/dbs_data/user_postgres/postgres-data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    ports:
+      - 5432:5432
+    user: "1001"
+  adminer:
+    image: adminer
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - 8080:8080

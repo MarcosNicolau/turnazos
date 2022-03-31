@@ -5,14 +5,22 @@
 	"main": "index.js",
 	"scripts": {
 		"start": "node ./dist/src/server",
-		"dev": "nodemon ./src/server.ts",
+		"prisma:generate": "prisma generate",
+		"prisma:watch": "nodemon -w ./prisma -e .prisma -x 'yarn run prisma:generate'",
+		"server:watch": "nodemon -r tsconfig-paths/register ./src/server.ts",
+		"docker:local-compose": "docker-compose -f ./docker-compose.local.yml up -d",
+		"dev": "yarn docker:local-compose && concurrently 'yarn run prisma:watch' 'yarn run server:watch'",
 		"build": "tsc",
 		"prepare": "husky install",
 		"test": "node",
 		"cm": "cz"
 	},
 	"dependencies": {
-		"express": "^4.17.3"
+		"@prisma/client": "^3.11.1",
+		"dotenv": "^16.0.0",
+		"express": "^4.17.3",
+		"helmet": "^5.0.2",
+		"redis": "^4.0.6"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^16.2.3",
@@ -22,7 +30,8 @@
 		"@typescript-eslint/eslint-plugin": "^5.17.0",
 		"@typescript-eslint/parser": "^5.17.0",
 		"commitizen": "^4.2.4",
-		"cz-conventional-changelog": "3.3.0",
+		"concurrently": "^7.0.0",
+		"cz-conventional-changelog": "^3.3.0",
 		"devmoji": "^2.3.0",
 		"eslint": "^8.12.0",
 		"eslint-plugin-import": "^2.25.4",
@@ -32,13 +41,9 @@
 		"prettier": "^2.6.1",
 		"semantic-release": "^19.0.2",
 		"ts-node": "^10.7.0",
+		"tsconfig-paths": "^3.14.1",
 		"typescript": "^4.6.3"
 	},
 	"author": "myself",
-	"license": "ISC",
-	"config": {
-		"commitizen": {
-			"path": "./node_modules/cz-conventional-changelog"
-		}
-	}
+	"license": "ISC"
 }

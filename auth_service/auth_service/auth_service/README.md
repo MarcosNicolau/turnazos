@@ -1,21 +1,7 @@
-# Typescript Node js server setup
+# User service
 
-This is the usual configuration I always end up doing when creating services with nodejs and typescript.
+This is the user service of turnazos. The project is just starting out, soon I will publish the API docs
 
-## How to run it
+## How to get started
 
-First clone the project and then run this command: `yarn setup`. This command will initialize a repository, update all packages to their latest version and prepare husky and commitizen.
-
-## What it will do for you
-
-This configuration will setup:
-
--   eslint
--   prettier
--   semantic-release
--   husky, commitizen and .commitlint
--   add some basic github workflows to automate semantic releasing
-
-## Can I contribute?
-
-Yes of course you can, feel free to create any pr.
+If you are going to work only with this service, you have to create a .env file and pass the variables listed [in here](https://github.com/Turnazos/user_service/tree/src/config/env) and run `yarn run dev`.
