@@ -11,15 +11,16 @@ model User {
   id         Int      @id @default(autoincrement())
   name       String
   country    String
-  avatar_url String
-  createdAt  DateTime @default(now())
-  phone      Phone    @relation(fields: [phoneId], references: [id])
-  phoneId    Int      @unique
+  password   String
+  avatar_url String?
+  created_at DateTime @default(now())
+  phone      Phone    @relation(fields: [phone_id], references: [id])
+  phone_id   Int      @unique
 }
 
 model Phone {
   id           Int    @id @default(autoincrement())
-  number       Int @unique
+  number       Int   
   country_code Int
   country      String
   user         User?
