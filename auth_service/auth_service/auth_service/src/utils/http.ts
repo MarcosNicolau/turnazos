@@ -1,6 +1,6 @@
-import { HTTP_DEFAULT_MESSAGES } from "constants/http";
 import { Request } from "express";
 import { ResponseSend } from "types/express";
+import { StatusCodes, getReasonPhrase } from "http-status-codes";
 
 type SuccessResponseArgs = {
 	[key in keyof Omit<ResponseSend, "result">]?: ResponseSend[key];
@@ -13,8 +13,8 @@ export const createSuccessResponse = (result?: any, args?: SuccessResponseArgs):
 	error: false,
 });
 
-export const createErrorResponse = (statusCode: number, message?: string): ResponseSend => ({
-	message: message || HTTP_DEFAULT_MESSAGES[statusCode] || "",
+export const createErrorResponse = (statusCode: StatusCodes, message?: string): ResponseSend => ({
+	message: message || getReasonPhrase(statusCode) || "",
 	statusCode,
 	error: true,
 });
