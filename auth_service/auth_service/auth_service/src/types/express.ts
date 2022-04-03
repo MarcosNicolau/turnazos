@@ -1,24 +1,26 @@
 import { Request, Response, NextFunction } from "express";
+import { StatusCodes } from "http-status-codes";
 
 export type ReqUser = {
-	userId: string;
+	id: number;
 	name: string;
-	mail: string;
-	clientId: string;
-	token: string;
+	phone: {
+		number: string;
+		area_code: string;
+	};
 };
 
-interface Req extends Request {
+type Req = Request & {
 	user: ReqUser;
-}
+};
 
 export type ResponseSend = {
 	result?: any;
 	message: string;
-	statusCode: number;
+	statusCode: StatusCodes;
 	error: boolean;
 };
 
-interface Res extends Response<ResponseSend> {}
+type Res = Response<ResponseSend>;
 
 export type IController = (req: Req, res: Res, next: NextFunction) => void;

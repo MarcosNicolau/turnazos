@@ -1,0 +1,3 @@
+export const PASSWORD_REQUIREMENTS = {
+	MIN_CHARACTERS: 8,
+};
