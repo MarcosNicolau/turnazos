@@ -8,8 +8,7 @@ coverage
 # production
 build
 dist
-combined.log
-error.log
+*.log
 
 # misc
 .DS_Store

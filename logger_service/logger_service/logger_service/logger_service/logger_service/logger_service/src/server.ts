@@ -1,10 +1,16 @@
+import { ENV_VARS } from "config/env";
+import { logger } from "config/logger";
 import express, { Application } from "express";
-import { getHelloWord } from "controllers";
+import { appLoaders } from "loaders";
 
-export const startServer = (app: Application) => {
-	const PORT = 5000;
-	app.get("/", getHelloWord);
-	app.listen(PORT, () => console.log(`app listening on port ${PORT}`));
+export const startServer = async (app: Application) => {
+	try {
+		const PORT = ENV_VARS.PORT || 5001;
+		await appLoaders();
+		app.listen(PORT, () => logger.info("logger service started"));
+	} catch {
+		process.exitCode = 1;
+	}
 };
 
 startServer(express());
