@@ -1,23 +1,22 @@
-# Typescript Node js server setup
+# Logger service
 
-This is the usual configuration I always end up doing when creating services with nodejs and typescript.
+This is the logging service of turnazos. The project is just starting out, soon we will publish the docs
 
-## How to run it
+## How to get started
 
-First clone the project and then run this command: `yarn setup`. This command will initialize a repository, update all packages to their latest version and prepare husky and commitizen.
+If you are going to work only with this service, you have to create a .env file and pass the variables listed [in here](https://github.com/Turnazos/user_service/tree/main/src/config/env.ts) and run `yarn run dev`.
 
-## What it will do for you
+### Branches
 
-This configuration will setup:
+| Branch  | Description                                                                               |
+| ------- | ----------------------------------------------------------------------------------------- |
+| main    | this is what running in prod, only merge when you want to trigger a new release           |
+| beta    | the newest features and the future prod code. This code is what we see in staging servers |
+| staging | all pr goes here                                                                          |
+| hotifx  | a bugfix to fix the prod code                                                             |
 
--   eslint
--   prettier
--   semantic-release
--   husky, commitizen and .commitlint
--   add some basic github workflows to automate semantic releasing
--   ts-config paths
--   basic jest configuration
+### Committing code
 
-## Can I contribute?
-
-Yes of course you can, feel free to create any pr.
+We are Commitizen friendly, meaning that whenever you commit code your message will be linted. <break />
+`yarn cm`: You should commit your code using this command. You will be prompt with instructions to write the perfect message.
+For more information go here: https://github.com/commitizen/cz-cli
