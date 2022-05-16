@@ -8,6 +8,7 @@ const loggerLevelsValidation = Joi.string().valid("error", "info", "silly", "htt
 interface MsgContent {
 	level: string;
 	message: string;
+	serviceName: "user";
 	stack: string;
 }
 
@@ -22,15 +23,20 @@ export const createLoggerConsumer = async (channel: Channel) => {
 	//Consume the logging event
 	channel.consume(AMQP_QUEUES.logging, (msg) => {
 		if (!msg) return;
-		const { level, message, stack }: MsgContent = JSON.parse(msg.content.toString() || "{}");
+		const { level, message, serviceName, stack }: MsgContent = JSON.parse(
+			msg.content.toString() || "{}"
+		);
 		//Validate the logger levels
 		const { error } = loggerLevelsValidation.validate(level);
-		if (error)
-			return logger.error(
+		if (error) {
+			logger.error(
 				`The service ${msg?.properties.appId} wanted publish a log event but was rejected because it didn't match the log level schema`
 			);
+			return channel.ack(msg);
+		}
+		const log = `${serviceName?.toUpperCase()} ${message}`;
 		//@ts-expect-error level validation does not work, but we are validating it with JOI.
-		logger[level || "info"](message, { stack });
+		logger[level || "info"](log, { stack });
 		//Acknowledge consumer
 		channel.ack(msg);
 	});
