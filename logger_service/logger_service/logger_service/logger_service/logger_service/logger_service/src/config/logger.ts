@@ -1,7 +1,17 @@
 import { ENV_VARS } from "config/env";
 import winston from "winston";
+import DailyRotateFile from "winston-daily-rotate-file";
 
 export const loggerLevels = winston.config.npm.levels;
+
+const transport: DailyRotateFile = new DailyRotateFile({
+	filename: "%DATE%.log",
+	datePattern: "MM-DD-YYYY",
+	maxSize: "20m",
+	maxFiles: "14d",
+	json: true,
+	dirname: "$PWD/logs",
+});
 
 export const logger = winston.createLogger({
 	levels: loggerLevels,
@@ -14,15 +24,8 @@ export const logger = winston.createLogger({
 		winston.format.colorize(),
 		winston.format.json()
 	),
-	transports:
-		ENV_VARS.NODE_ENV === "dev"
-			? []
-			: [
-					new winston.transports.File({ filename: "error.log", level: "error" }),
-					new winston.transports.File({ filename: "combined.log", level: "" }),
-			  ],
-
-	exceptionHandlers: [new winston.transports.File({ filename: "exceptions.log" })],
+	transports: ENV_VARS.NODE_ENV === "dev" ? [] : transport,
+	exceptionHandlers: [new winston.transports.File({ filename: "logs/exceptions.log" })],
 });
 
 //
