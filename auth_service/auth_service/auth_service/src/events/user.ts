@@ -9,7 +9,7 @@ import { REDIS_EXPIRY_TIMES_IN_DAYS, REDIS_KEYS } from "constants/redis";
 import { EVENT_EMITTER_NAMES } from "constants/events";
 import { daysToSeconds } from "utils/date";
 
-export default (eventEmitter: EventEmitter) => {
+export const userEvents = (eventEmitter: EventEmitter) => {
 	const redisSet = ({ id, ...args }: UserRedisSetEventArgs) => {
 		setImmediate(async () => {
 			const key = REDIS_KEYS.user(id);
