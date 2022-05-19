@@ -70,7 +70,7 @@ export class UserService {
 			const cachedUser = await RedisClientService.hashes.getAllFields(
 				REDIS_KEYS.user(this.id)
 			);
-			if (cachedUser) cachedUser;
+			if (cachedUser) return cachedUser;
 			const user = await prisma.user.findUnique({
 				where: {
 					id: this.id,
@@ -118,10 +118,10 @@ export class UserService {
 
 	async update({ phone, ...payload }: UpdateUserPayload) {
 		try {
-			//If username is passed, validate that username is not in use
+			//If phone is passed, validate that the phone is not in use
 			if (phone && (await validatePhoneInUse(phone)))
 				return Promise.reject(getPhoneUsedError());
-
+			//And then validate if its real
 			const phoneNumber = phone && getPhoneNumberInfo(phone);
 			if (phone && (!phoneNumber?.isValid() || !phoneNumber?.country))
 				return Promise.reject(new ValidationError("invalid phone number"));
@@ -184,7 +184,7 @@ export class UserService {
 
 	/**
 	 * @IMPORTANT This is different from the change password.
-	 * This changes the password without validating anything
+	 * This changes the password without validating the old one.
 	 * So make sure you perform a 2FA validation.
 	 */
 	async forgotPassword({ password }: ForgotPasswordPayload) {
@@ -206,17 +206,18 @@ export class UserService {
 
 	async delete() {
 		try {
-			const user = await prisma.user.delete({
+			const user = await this.get();
+			//We are deleting the phone, because it is a restricted foreign key, so by deleting the phone, we delete all the user data
+			await prisma.phone.delete({
 				where: {
-					id: this.id,
+					id: Number(user.phone_id),
 				},
-				select: userSanitization,
 			});
 			if (!user) return Promise.reject(getUserNotFoundError());
 			EventEmitterService.user.redisDel({ id: this.id });
 			return user;
 		} catch (err) {
-			Promise.reject(new UnknownError(err));
+			return Promise.reject(new UnknownError(err));
 		}
 	}
 }

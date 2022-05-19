@@ -8,20 +8,20 @@ generator client {
 }
 
 model User {
-  id         Int      @id @default(autoincrement())
+  id         Int      @id @default(autoincrement()) @unique
   name       String
   country    String
   password   String
   avatar_url String?
   created_at DateTime @default(now())
-  phone      Phone    @relation(fields: [phone_id], references: [id])
+  phone      Phone    @relation(fields: [phone_id], references: [id], onDelete: Cascade)
   phone_id   Int      @unique
 }
 
 model Phone {
-  id           Int    @id @default(autoincrement())
-  number       Int   
+  id           Int    @id @default(autoincrement()) @unique
+  number       Int  
   country_code Int
-  country      String
-  user         User?
+  country      String 
+  user         User? 
 }

@@ -22,7 +22,13 @@ CREATE TABLE "Phone" (
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "User_phone_id_key" ON "User"("phone_id");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Phone_id_key" ON "Phone"("id");
+
 -- AddForeignKey
-ALTER TABLE "User" ADD CONSTRAINT "User_phone_id_fkey" FOREIGN KEY ("phone_id") REFERENCES "Phone"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "User" ADD CONSTRAINT "User_phone_id_fkey" FOREIGN KEY ("phone_id") REFERENCES "Phone"("id") ON DELETE CASCADE ON UPDATE CASCADE;

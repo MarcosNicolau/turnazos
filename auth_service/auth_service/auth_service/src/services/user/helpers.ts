@@ -14,6 +14,8 @@ export const userSanitization = {
 	name: true,
 	avatar_url: true,
 	phone: true,
+	phone_id: true,
+	country: true,
 };
 
 export const getUserNotFoundError = () => new DocumentNotFoundError("user not found");

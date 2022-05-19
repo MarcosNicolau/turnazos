@@ -1,5 +1,5 @@
 import { createSuccessResponse } from "utils/http";
-import { UserService } from "services";
+import { UserService } from "services/user";
 import { IController } from "types/express";
 import { userJoiSchemas } from "./helpers";
 import { ValidationError } from "utils/error";
@@ -26,8 +26,7 @@ export const createUser: IController = async (req, res, next) => {
 export const getUser: IController = async (req, res, next) => {
 	const { id } = req.user;
 	try {
-		const { get } = new UserService({ id });
-		const user = await get();
+		const user = await new UserService({ id }).get();
 		return res.send(createSuccessResponse(user));
 	} catch (err) {
 		return next(err);

@@ -6,6 +6,10 @@ export type UserAndPhone = User & {
 	phone: Phone;
 };
 
+export type SanitizedUser = Pick<User, "avatar_url" | "id" | "name" | "country"> & {
+	phone: Phone;
+};
+
 export interface CreateUserPayload extends Omit<User, "id" | "created_at" | "phone_id"> {
 	phone: PhoneIdentifiers;
 }

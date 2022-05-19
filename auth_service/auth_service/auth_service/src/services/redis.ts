@@ -7,7 +7,8 @@ export class RedisClientService {
 		setMultiple: async (
 			key: string,
 			values: Record<string | number, string | number | Buffer>
-		) => redisClient.hSet(key, values),
+			//@ts-expect-error hset requires json data
+		) => redisClient.hSet(key, JSON.stringify(values)),
 		fieldExists: async (key: string, field: string) => await redisClient.hExists(key, field),
 		getSingleField: async (key: string, field: string) => await redisClient.hGet(key, field),
 		getAllFields: async (key: string) => await redisClient.hGetAll(key),
