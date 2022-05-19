@@ -5,14 +5,14 @@ services:
     env_file:
       - .env
     volumes:
-      - ~/turnazos/back_end/dbs_data/user_redis:/bitnami/redis/data
+      - /home/data/turnazos/user_service/redis:/bitnami/redis/data
     ports:
       - 6379:6379
   postgres:
     image: postgres
     restart: always
     volumes:
-      - ~/turnazos/back_end/dbs_data/user_postgres/postgres-data:/var/lib/postgresql/data
+      - /home/data/turnazos/user_service/postgres:/var/lib/postgresql/data
     env_file:
       - .env
     ports:
