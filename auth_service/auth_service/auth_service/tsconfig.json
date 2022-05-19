@@ -20,7 +20,17 @@
 		"forceConsistentCasingInFileNames": true,
 		"baseUrl": "./src",
 		"typeRoots": ["./src/types"],
-		"types": []
+		"types": ["@types/jest", "jest"],
+		"paths": {
+			"api/*": ["api/*"],
+			"config/*": ["config/*"],
+			"constants/*": ["constants/*"],
+			"events/*": ["events/*"],
+			"loaders/*": ["loaders/*"],
+			"services/*": ["services/*"],
+			"type/*": ["types/*"],
+			"utils/*": ["utils/*"]
+		}
 	},
-	"include": ["src/**/*", "package.json"]
+	"include": ["src/**/*", "package.json", "__tests__"]
 }
