@@ -1,4 +1,4 @@
-import { ReqUser } from "types/controller";
+import { ReqUser } from "types/express";
 
 declare global {
 	namespace Express {

@@ -5,14 +5,13 @@ export type ReqUser = {
 	id: number;
 	name: string;
 	phone: {
+		id: number;
 		number: string;
 		area_code: string;
 	};
 };
 
-type Req = Request & {
-	user: ReqUser;
-};
+type Req = Request;
 
 export type ResponseSend = {
 	result?: any;
