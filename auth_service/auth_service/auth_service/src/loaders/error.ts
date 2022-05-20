@@ -1,10 +1,17 @@
+import { LoggerService } from "services/logger";
+
 export const processErrorsLoaders = () => {
 	// get the unhandled rejection and throw it to another fallback handler we already have.
-	process.on("unhandledRejection", (error) => {
-		throw error;
+	process.on("unhandledRejection", (error: any) => {
+		LoggerService.sendLog(
+			`UNHANDLED REJECTION: ${error?.description || error?.message || JSON.stringify(error)}`,
+			{ level: "error", stack: error?.stack }
+		);
 	});
-	//TODO publish an event to the logger service
 	process.on("uncaughtException", (error) => {
-		console.error(`uncaught exception ${JSON.stringify(error)}`);
+		LoggerService.sendLog(
+			`UNCAUGHT EXCEPTION: ${error.name}, ${JSON.stringify(error.message)}`,
+			{ level: "error", stack: error.stack }
+		);
 	});
 };

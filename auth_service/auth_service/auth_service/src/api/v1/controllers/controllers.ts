@@ -3,9 +3,11 @@ import { UserService } from "services/user";
 import { IController } from "types/express";
 import { userJoiSchemas } from "./helpers";
 import { ValidationError } from "utils/error";
+import { LoggerService } from "services/logger";
 
 export const createUser: IController = async (req, res, next) => {
 	try {
+		LoggerService.sendLog("received a request to create a user...");
 		const { value, error } = userJoiSchemas.create.validate(req.body);
 		if (error?.message || !value) return next(new ValidationError(error.message));
 		const { phone, ...payload } = value;
@@ -17,6 +19,7 @@ export const createUser: IController = async (req, res, next) => {
 				country_code: Number(phone.country_code),
 			},
 		});
+		LoggerService.sendLog("user created successfully");
 		return res.send(createSuccessResponse());
 	} catch (err) {
 		return next(err);
@@ -92,7 +95,9 @@ export const forgotPassword: IController = async (req, res, next) => {
 export const deleteUser: IController = async (req, res, next) => {
 	const { id } = req.user;
 	try {
+		LoggerService.sendLog("received a request to delete a user...");
 		await new UserService({ id }).delete();
+		LoggerService.sendLog("user deleted successfully");
 		return res.send(createSuccessResponse());
 	} catch (err) {
 		return next(err);

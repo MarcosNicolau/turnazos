@@ -1,3 +1,4 @@
+import { UnknownError } from "./../../utils/error";
 import { createErrorResponse } from "utils/http";
 import { IController, ReqUser } from "types/express";
 import jwt from "jsonwebtoken";
@@ -24,6 +25,6 @@ export const readJWT: IController = async (req, res, next) => {
 		req.user = payload;
 		return next();
 	} catch (err) {
-		return res.status(401).send(createErrorResponse(res.statusCode));
+		return next(new UnknownError(err));
 	}
 };

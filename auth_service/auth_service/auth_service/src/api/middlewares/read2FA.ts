@@ -1,7 +1,9 @@
+import { LoggerService } from "services/logger";
 import { createErrorResponse } from "utils/http";
 import { IController, ReqUser } from "types/express";
 import Joi from "joi";
 import { CUSTOM_HEADERS } from "constants/headers";
+import { UnknownError } from "utils/error";
 
 // This middleware decode the info passed from the auth service when there is a 2FA authentication
 // And attaches the information to the req object
@@ -11,7 +13,10 @@ export const read2FA: IController = async (req, res, next) => {
 	if (!user) return res.status(401).send(createErrorResponse(res.statusCode));
 
 	try {
-		if (Array.isArray(user)) return;
+		if (Array.isArray(user))
+			return LoggerService.sendLog(
+				"error while reading 2FA middleware, wrongly received an array as the user header"
+			);
 		//Data comes in base 64
 		const parsedUser = JSON.parse(Buffer.from(user, "base64").toString("utf-8"));
 		await Joi.object<ReqUser>({
@@ -25,6 +30,6 @@ export const read2FA: IController = async (req, res, next) => {
 		req.user = parsedUser;
 		return next();
 	} catch (err) {
-		return res.status(401).send(createErrorResponse(res.statusCode));
+		return next(new UnknownError(err));
 	}
 };
