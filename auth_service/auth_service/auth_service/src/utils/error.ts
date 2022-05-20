@@ -6,6 +6,7 @@ export class AppError extends Error {
 	public readonly message: string;
 	public readonly httpCode?: StatusCodes;
 	public readonly isOperational?: boolean;
+	public readonly description?: string;
 
 	constructor({
 		description,
@@ -25,6 +26,7 @@ export class AppError extends Error {
 		this.message = message || getReasonPhrase(httpCode || 500);
 		this.httpCode = httpCode;
 		this.isOperational = isOperational;
+		this.description = description;
 
 		Error.captureStackTrace(this);
 	}

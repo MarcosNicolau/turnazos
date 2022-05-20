@@ -4,4 +4,7 @@ export const EVENT_EMITTER_NAMES = {
 		REDIS_DELETE: "user_redis_delete",
 		REDIS_UPDATE_EXPIRATION: "user_redis_update_expiration",
 	},
+	AMQP: {
+		SEND_LOG: "amqp_send_log",
+	},
 };
