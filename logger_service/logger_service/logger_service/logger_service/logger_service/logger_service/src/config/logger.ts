@@ -10,7 +10,7 @@ const transport: DailyRotateFile = new DailyRotateFile({
 	maxSize: "20m",
 	maxFiles: "14d",
 	json: true,
-	dirname: "$PWD/logs",
+	dirname: "logs/",
 });
 
 export const logger = winston.createLogger({
