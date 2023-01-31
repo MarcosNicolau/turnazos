@@ -11,6 +11,7 @@ const startServer = async () => {
 		app.listen(PORT, () => LoggerService.sendLog(`server ready and listening on port ${PORT}`));
 	} catch (err) {
 		console.error(`WARNING, COULD NOT START SERVER, err: ${err}`);
+		process.exitCode = 1;
 	}
 };
 
