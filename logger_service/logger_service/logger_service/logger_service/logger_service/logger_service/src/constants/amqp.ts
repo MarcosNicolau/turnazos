@@ -1,5 +1,7 @@
 export const AMQP_QUEUES = {
-	logging: "logger_channel",
+	logger: {
+		error: "error",
+	},
 };
 
 export const AMQP_EXCHANGES = {
