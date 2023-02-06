@@ -22,17 +22,9 @@ error.log
 *.env
 tsconfig.tsbuildinfo
 .eslintcache
+local_scripts
+*.key*
 
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Expo
-.expo/
-*.jks
-*.p8
-*.p12
-*.key
-*.mobileprovision
-*.orig.*
-web-build/
