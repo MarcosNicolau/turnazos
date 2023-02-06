@@ -4,7 +4,7 @@ import helmet from "helmet";
 import { createErrorResponse } from "utils/http";
 import { AppError } from "utils/error";
 import { StatusCodes } from "http-status-codes";
-import v1Routes from "api/v1/routes";
+import { router as v1Router } from "api/v1/routes";
 import { LoggerService } from "services/logger";
 
 export const expressLoader = async (app: Application) => {
@@ -13,7 +13,7 @@ export const expressLoader = async (app: Application) => {
 	app.use(express.json());
 	app.use(express.urlencoded({ extended: true }));
 
-	app.use("/user/v1", v1Routes);
+	app.use("/auth/v1", v1Router);
 
 	//Custom error catcher middleware
 	app.use((err: AppError, req: Request, res: Response, next: NextFunction) => {

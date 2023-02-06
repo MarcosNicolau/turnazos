@@ -58,6 +58,7 @@ export const secondsToMinutes = (time: number) => time / 60;
 //TO SECONDS
 export const msToSeconds = (time: number) => time / 1000;
 export const minutesToSeconds = (time: number) => time * 60;
+export const hoursToSeconds = (time: number) => time * 3600;
 export const daysToSeconds = (time: number) => time * 8400;
 
 /**
@@ -67,3 +68,9 @@ export const daysToSeconds = (time: number) => time * 8400;
  */
 export const formatSecondsInMinutes = (time: number) =>
 	new Date(time).toTimeString().split(" ")[0].substring(3);
+
+export const getDateDiffInMinutes = (first: Date, second: Date) => {
+	const microSecondsDiff = Math.abs(second.getTime() - first.getTime());
+
+	return msToMinutes(microSecondsDiff);
+};

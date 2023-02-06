@@ -12,10 +12,8 @@ import { PASSWORD_REQUIREMENTS } from "constants/password";
 export const userSanitization = {
 	id: true,
 	name: true,
-	avatar_url: true,
 	phone: true,
 	phone_id: true,
-	country: true,
 };
 
 export const getUserNotFoundError = () => new DocumentNotFoundError("user not found");

@@ -12,7 +12,6 @@ export const dbLoader = async () => {
 	}
 	try {
 		await prisma.$connect();
-		console.log("Prisma connection successful");
 		sendLog("Prisma connection successful");
 	} catch (err) {
 		sendLog(`there was a problem while connecting to prisma, err: ${err}`, { level: "error" });

@@ -4,11 +4,6 @@ import { StatusCodes } from "http-status-codes";
 export type ReqUser = {
 	id: number;
 	name: string;
-	phone: {
-		id: number;
-		number: string;
-		area_code: string;
-	};
 };
 
 type Req = Request;

@@ -1,18 +1,21 @@
 import { eventEmitter } from "config/eventEmitter";
-import { EVENT_EMITTER_NAMES } from "constants/events";
-import {
-	UserRedisDeleteEventArgs,
-	UserRedisSetEventArgs,
-	UserRedisUpdateExpirationEventArgs,
-} from "types/user";
+import { EVENTS } from "constants/events";
+import { SendNotificationArgs } from "type/events/notification";
+import { SanitizedUser } from "type/user";
 
 export class EventEmitterService {
 	static user = {
-		redisSet: (args: UserRedisSetEventArgs) =>
-			eventEmitter.emit(EVENT_EMITTER_NAMES.USER.REDIS_SET, args),
-		redisDel: (args: UserRedisDeleteEventArgs) =>
-			eventEmitter.emit(EVENT_EMITTER_NAMES.USER.REDIS_DELETE, args),
-		redisUpdateExpiration: (args: UserRedisUpdateExpirationEventArgs) =>
-			eventEmitter.emit(EVENT_EMITTER_NAMES.USER.REDIS_UPDATE_EXPIRATION, args),
+		generateLoginOTPCode: (user: SanitizedUser) =>
+			eventEmitter.emit(EVENTS.USER.GENERATE_LOGIN_OTP_CODE, user),
+		publishUserCreation: (user: SanitizedUser) =>
+			eventEmitter.emit(EVENTS.USER.PUBLISH_USER_CREATION, user),
+	};
+	static otpCode = {
+		codeCreated: (key: string) => eventEmitter.emit(EVENTS.OTP_CODE.CREATED_CODE, key),
+		blacklistKey: (key: string) => eventEmitter.emit(EVENTS.OTP_CODE.BLACKLIST_ID, key),
+	};
+
+	static notification = {
+		send: (msg: SendNotificationArgs) => eventEmitter.emit(EVENTS.NOTIFICATION.SEND, msg),
 	};
 }
