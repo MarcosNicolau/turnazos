@@ -10,9 +10,7 @@ generator client {
 model User {
   id         Int      @id @default(autoincrement()) @unique
   name       String
-  country    String
   password   String
-  avatar_url String?
   created_at DateTime @default(now())
   phone      Phone    @relation(fields: [phone_id], references: [id], onDelete: Cascade)
   phone_id   Int      @unique

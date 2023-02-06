@@ -15,8 +15,6 @@ export const userJoiSchemas = {
 			number: Joi.number().required(),
 		}),
 		password: passwordValidationSchema.required(),
-		avatar_url: Joi.string().optional(),
-		country: Joi.string().required(),
 		name: Joi.string().required(),
 	}),
 	update: Joi.object<UpdateUserPayload>({
@@ -24,8 +22,6 @@ export const userJoiSchemas = {
 			country_code: Joi.number().required(),
 			number: Joi.number().required(),
 		}).optional(),
-		avatar_url: Joi.string().optional(),
-		country: Joi.string().optional(),
 		name: Joi.string().optional(),
 	}),
 	credentials: Joi.object<GetWithCredentialsPayload>({

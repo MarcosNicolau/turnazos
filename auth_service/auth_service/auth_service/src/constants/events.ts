@@ -1,10 +1,16 @@
-export const EVENT_EMITTER_NAMES = {
+export const EVENTS = {
 	USER: {
-		REDIS_SET: "user_redis_set",
-		REDIS_DELETE: "user_redis_delete",
-		REDIS_UPDATE_EXPIRATION: "user_redis_update_expiration",
+		GENERATE_LOGIN_OTP_CODE: "user_generate_login_otp_code",
+		PUBLISH_USER_CREATION: "user_publish_creation",
 	},
-	AMQP: {
-		SEND_LOG: "amqp_send_log",
+	LOGGER: {
+		SEND: "logger_send_log",
+	},
+	OTP_CODE: {
+		CREATED_CODE: "otp_code_created_code",
+		BLACKLIST_ID: "otp_code_blacklist_id",
+	},
+	NOTIFICATION: {
+		SEND: "notification_send",
 	},
 };

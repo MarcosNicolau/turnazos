@@ -1,4 +1,5 @@
 import bcrypt from "bcrypt";
+import crypto from "crypto";
 
 /**
  * @param data The data to be encrypted.
@@ -46,3 +47,11 @@ export const saltString = (string: string, salt?: string | number) =>
  */
 export const compareSaltedString = (string: string, encrypted: string) =>
 	bcrypt.compare(string, encrypted);
+
+export const generateRandomKey = (bytes?: number) =>
+	crypto.randomBytes(bytes || 20).toString("hex");
+
+export const generateRandomCode = (length = 6) =>
+	Math.random()
+		.toString()
+		.substring(2, length + 2);

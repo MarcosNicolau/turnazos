@@ -1,2 +1,3 @@
-export * from "./read2FA";
-export * from "./readJWT";
+export * from "./validateOTPCode";
+export * from "./authenticate";
+export * from "./validatePhoneOTPCode";

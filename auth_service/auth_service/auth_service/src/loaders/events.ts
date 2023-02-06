@@ -1,9 +1,11 @@
 import { Channel } from "amqplib";
 import { eventEmitter } from "config/eventEmitter";
-import { loggerEvents, userEvents } from "../events";
+import { loggerEvents, userEvents, notificationEvents, otpCodeEvents } from "../events";
 
 export const eventsLoaders = async (amqpChannel: Channel) => {
-	await loggerEvents(eventEmitter, amqpChannel);
-	userEvents(eventEmitter);
+	loggerEvents(eventEmitter, amqpChannel);
+	userEvents(eventEmitter, amqpChannel);
+	notificationEvents(eventEmitter, amqpChannel);
+	otpCodeEvents(eventEmitter);
 	return;
 };

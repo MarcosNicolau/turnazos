@@ -1,14 +1,17 @@
-import { REDIS_KEYS } from "constants/redis";
 import { prisma } from "config/prisma";
 import {
 	ChangePasswordPayload,
 	CreateUserPayload,
 	ForgotPasswordPayload,
 	GetWithCredentialsPayload,
-	UpdateUserPayload,
 } from "types/user";
 import { compareSaltedString, saltString } from "utils/crypto";
-import { InvalidCredentialsError, ValidationError, UnknownError } from "utils/error";
+import {
+	InvalidCredentialsError,
+	ValidationError,
+	UnknownError,
+	DocumentNotFoundError,
+} from "utils/error";
 import { getPhoneNumberInfo } from "utils/phone";
 import {
 	getPhoneUsedError,
@@ -18,8 +21,6 @@ import {
 	userSanitization,
 	validatePhoneInUse,
 } from "./helpers";
-import { EventEmitterService } from "../eventEmitter";
-import { RedisClientService } from "../redis";
 
 /**
  * @constructor @param id is necessary to perform GET, UPDATE, DELETE actions
@@ -31,11 +32,25 @@ export class UserService {
 		this.id = opts.id;
 	}
 
+	static get = async (id: number) => {
+		try {
+			const user = await prisma.user.findUnique({
+				where: { id },
+				select: userSanitization,
+			});
+			if (!user) return Promise.reject(new DocumentNotFoundError("user does not exist"));
+			return user;
+		} catch (err) {
+			return Promise.reject(new UnknownError(err));
+		}
+	};
+
 	static async create({ phone, password, ...payload }: CreateUserPayload) {
 		//Data validation
 		const { error } = passwordValidationSchema.required().validate(password);
 		if (error?.message) return Promise.reject(new ValidationError(error.message));
 		const phoneNumber = getPhoneNumberInfo(phone);
+
 		if (!phoneNumber.isValid() || !phoneNumber.country)
 			return Promise.reject(new ValidationError("invalid phone number"));
 		try {
@@ -58,40 +73,7 @@ export class UserService {
 				},
 				select: userSanitization,
 			});
-			EventEmitterService.user.redisSet(user);
 			return user;
-		} catch (err) {
-			return Promise.reject(new UnknownError(err));
-		}
-	}
-
-	async get() {
-		try {
-			const cachedUser = await RedisClientService.hashes.getAllFields(
-				REDIS_KEYS.user(this.id)
-			);
-			if (cachedUser) return cachedUser;
-			const user = await prisma.user.findUnique({
-				where: {
-					id: this.id,
-				},
-				select: userSanitization,
-			});
-			if (!user) return Promise.reject(getUserNotFoundError());
-			//Cache user
-			EventEmitterService.user.redisSet(user);
-			return user;
-		} catch (err) {
-			return Promise.reject(new UnknownError(err));
-		}
-	}
-
-	static async getAll() {
-		try {
-			const users = await prisma.user.findMany({
-				select: userSanitization,
-			});
-			return users;
 		} catch (err) {
 			return Promise.reject(new UnknownError(err));
 		}
@@ -103,47 +85,11 @@ export class UserService {
 			if (!result || !result.user) return Promise.reject(new InvalidCredentialsError());
 			const { user } = result;
 			//We compared the salted string
-			try {
-				await compareSaltedString(password, user.password);
-			} catch {
-				return Promise.reject(new InvalidCredentialsError());
-			}
+			const valid = await compareSaltedString(password, user.password);
+			if (!valid) return Promise.reject(new InvalidCredentialsError());
 			//Filter the password to not expose it
 			const { password: filterPassword, ...userSanitized } = user; // eslint-disable-line @typescript-eslint/no-unused-vars
 			return userSanitized;
-		} catch (err) {
-			return Promise.reject(new UnknownError(err));
-		}
-	}
-
-	async update({ phone, ...payload }: UpdateUserPayload) {
-		try {
-			//If phone is passed, validate that the phone is not in use
-			if (phone && (await validatePhoneInUse(phone)))
-				return Promise.reject(getPhoneUsedError());
-			//And then validate if its real
-			const phoneNumber = phone && getPhoneNumberInfo(phone);
-			if (phone && (!phoneNumber?.isValid() || !phoneNumber?.country))
-				return Promise.reject(new ValidationError("invalid phone number"));
-
-			const user = await prisma.user.update({
-				where: {
-					id: this.id,
-				},
-				data: {
-					...payload,
-					phone: {
-						update: {
-							...phone,
-							country: phone && phoneNumber?.country,
-						},
-					},
-				},
-				select: userSanitization,
-			});
-			if (!user) return Promise.reject(getUserNotFoundError());
-			EventEmitterService.user.redisSet(user);
-			return user;
 		} catch (err) {
 			return Promise.reject(new UnknownError(err));
 		}
@@ -187,35 +133,22 @@ export class UserService {
 	 * This changes the password without validating the old one.
 	 * So make sure you perform a 2FA validation.
 	 */
-	async forgotPassword({ password }: ForgotPasswordPayload) {
+	static async forgotPassword({ password, phone }: ForgotPasswordPayload) {
 		try {
 			const { error } = passwordValidationSchema.required().validate(password);
 			if (error?.message) return Promise.reject(new ValidationError(error.message));
 			const saltedPassword = await saltString(password);
-			const user = await prisma.user.update({
-				where: { id: this.id },
+			//Find user with the given number
+			const user = await prisma.phone.findFirst({
+				where: { number: phone.number, country_code: phone.country_code },
+				select: { user: { select: { id: true } } },
+			});
+			if (!user) return Promise.reject(getUserNotFoundError());
+			await prisma.user.update({
+				where: { id: user.user?.id },
 				data: { password: saltedPassword },
-				select: userSanitization,
 			});
-			if (!user) return Promise.reject(getUserNotFoundError());
-			return user;
-		} catch (err) {
-			return Promise.reject(new UnknownError(err));
-		}
-	}
-
-	async delete() {
-		try {
-			const user = await this.get();
-			//We are deleting the phone, because it is a restricted foreign key, so by deleting the phone, we delete all the user data
-			await prisma.phone.delete({
-				where: {
-					id: Number(user.phone_id),
-				},
-			});
-			if (!user) return Promise.reject(getUserNotFoundError());
-			EventEmitterService.user.redisDel({ id: this.id });
-			return user;
+			return;
 		} catch (err) {
 			return Promise.reject(new UnknownError(err));
 		}

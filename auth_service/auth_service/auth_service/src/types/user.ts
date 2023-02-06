@@ -6,7 +6,7 @@ export type UserAndPhone = User & {
 	phone: Phone;
 };
 
-export type SanitizedUser = Pick<User, "avatar_url" | "id" | "name" | "country"> & {
+export type SanitizedUser = Pick<User, "id" | "name"> & {
 	phone: Phone;
 };
 
@@ -34,16 +34,5 @@ export interface ChangePasswordPayload {
 
 export interface ForgotPasswordPayload {
 	password: string;
-}
-
-export interface UserRedisSetEventArgs extends Partial<Omit<UserAndPhone, "id">> {
-	id: number;
-}
-
-export interface UserRedisDeleteEventArgs {
-	id: number;
-}
-
-export interface UserRedisUpdateExpirationEventArgs {
-	id: number;
+	phone: PhoneIdentifiers;
 }
