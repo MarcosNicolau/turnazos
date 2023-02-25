@@ -1,0 +1,4 @@
+{
+	// Install this extension to get import syntax in prisma files
+	"recommendations": ["ajmnz.prisma-import"]
+}

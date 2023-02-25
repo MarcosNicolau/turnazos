@@ -1,0 +1,21 @@
+import { Business } from "./business"
+
+model PaymentMethods {
+    id Int @id @unique @default(autoincrement()) 
+    cash Boolean
+    credit_card Boolean
+    debit_card Boolean
+    cryptocurrency Boolean
+    wire_transfer Boolean
+    mercado_pago Boolean
+    cvu Boolean
+    other_payments OtherPayments[]
+    business Business?
+}
+
+model OtherPayments {
+    id Int @id @unique @default(autoincrement())
+    name String
+    payment_id Int
+    payment PaymentMethods @relation(fields: [payment_id], references: [id], onDelete: Cascade)
+}

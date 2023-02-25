@@ -1,0 +1,39 @@
+import { Business } from "./business"
+
+model Settings {
+    id Int @id @default(autoincrement()) @unique
+    branch_share_clients Boolean
+    // Can see profile, needs to request before taking an appointment
+    private Boolean
+    // Can only be found through a invitation key 
+    hidden Boolean
+    invitation_keys InvitationKeys?
+    verification Verification?
+    business Business?
+}
+
+model Verification {
+    id Int @id @default(autoincrement()) @unique
+    is_verified Boolean
+    verification_status String
+    documentation_url String
+    settings_id Int @unique
+    settings Settings @relation(fields: [settings_id], references: [id], onDelete: Cascade)
+}
+
+model InvitationKeys {
+    id Int @id @default(autoincrement()) @unique
+    keys InvitationKey[]
+    keys_duration Int
+    customers_can_invitate Boolean
+    settings_id Int @unique
+    settings Settings @relation(fields: [settings_id], references: [id])
+}
+
+model InvitationKey{
+    id Int @id @default(autoincrement()) @unique
+    key String @unique
+    expires_at DateTime
+    invitation_config_id Int @unique
+    invitation_keys_config InvitationKeys @relation(fields: [invitation_config_id], references: [id], onDelete: Cascade)
+}
