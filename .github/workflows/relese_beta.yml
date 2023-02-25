@@ -1,0 +1,36 @@
+name: release_beta
+
+on:
+  push:
+    branches: [beta]
+    paths-ignore: ["**.md"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: beta
+          fetch-depth: "0"
+      - run: git fetch --depth=1 origin beta +refs/tags/*:refs/tags/*
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: "cache"
+      - uses: oleksiyrudenko/gha-git-credentials@v2-latest
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+      - name: "Install"
+        run: yarn install
+      - name: "Build"
+        run: yarn run build
+      - name: "Version"
+        run: npx semantic-release
