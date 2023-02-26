@@ -19,7 +19,11 @@
 		"cm": "cz"
 	},
 	"dependencies": {
-		"dotenv": "^16.0.3"
+		"dotenv": "^16.0.3",
+		"express": "^4.18.2",
+		"helmet": "^6.0.1",
+		"http-status-codes": "^2.2.0",
+		"jsonwebtoken": "^9.0.0"
 	},
 	"devDependencies": {
 		"@commitlint/cli": "^17.4.4",
