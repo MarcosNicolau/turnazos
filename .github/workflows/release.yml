@@ -12,7 +12,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [19.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -34,3 +34,11 @@ jobs:
         run: yarn run build
       - name: "Version"
         run: npx semantic-release
+      - name: "Get latest tag"
+        run: export LATEST_TAG=$(git describe --abbrev=0 --tags)
+      - name: "Build docker"
+        run: "docker build -t turnazos/storage ./"
+      - name: "Docker tag"
+        run: docker tag turnazos/storage ghcr.io/turnazos/storage:$LATEST_TAG
+      - name: "Docker push"
+        run: docker push ghcr.io/turnazos/storage:$LATEST_TAG && docker push ghcr.io/turnazos/storage:latest
