@@ -6,6 +6,29 @@ This is the logging service of turnazos. The project is just starting out, soon 
 
 If you are going to work only with this service, you have to create a .env file and pass the variables listed [in here](https://github.com/Turnazos/user_service/tree/main/src/config/env.ts) and run `yarn run dev`.
 
+## Persists logs in docker
+
+To persists logs in docker, pass a volume to `/var/log/turnazos_logger`
+
+example in docker file:
+
+```yml
+volumes:
+    logger_data:
+
+name: turnazos
+services:
+    logger:
+        image: ghcr.io/turnazos/logger:latest
+        volumes:
+            - logger_data:/var/log/turnazos_logger
+        restart: always
+        env_file:
+            - ./.env
+        ports:
+            - 5000:5000
+```
+
 ### Branches
 
 | Branch  | Description                                                                               |
