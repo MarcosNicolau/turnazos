@@ -18,7 +18,7 @@ const createDailyRotateFileTransportByLevel = (
 		datePattern: "MM-DD-YYYY",
 		json: true,
 		level,
-		dirname: `logs/${level}`,
+		dirname: `${ENV_VARS.LOGS_DIR_NAME}/${level}`,
 		maxSize: "20m",
 		...opts,
 	});
@@ -49,7 +49,7 @@ const transports: DailyRotateFile[] = [
 		datePattern: "MM-DD-YYYY",
 		json: true,
 		level: "silly",
-		dirname: "logs/all",
+		dirname: `${ENV_VARS.LOGS_DIR_NAME}/all`,
 		maxSize: "20m",
 		maxFiles: "1d",
 	}),
@@ -68,7 +68,9 @@ export const logger = winston.createLogger({
 		winston.format.json()
 	),
 	transports: ENV_VARS.NODE_ENV === "production" ? transports : [],
-	exceptionHandlers: [new winston.transports.File({ filename: "logs/exceptions.log" })],
+	exceptionHandlers: [
+		new winston.transports.File({ filename: `${ENV_VARS.LOGS_DIR_NAME}/exceptions.log` }),
+	],
 });
 
 //
