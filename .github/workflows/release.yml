@@ -34,11 +34,7 @@ jobs:
         run: yarn run build
       - name: "Version"
         run: npx semantic-release
-      - name: "Get latest tag"
+      - name: "Get repo latest tag"
         run: export LATEST_TAG=$(git describe --abbrev=0 --tags)
-      - name: "Build docker"
-        run: "docker build -t turnazos/storage ./"
-      - name: "Docker tag"
-        run: docker tag turnazos/storage ghcr.io/turnazos/storage:$LATEST_TAG
-      - name: "Docker push"
-        run: docker push ghcr.io/turnazos/storage:$LATEST_TAG && docker push ghcr.io/turnazos/storage:latest
+      - name: "Docker Publish"
+        run: "npm run docker"
