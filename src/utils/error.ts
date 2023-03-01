@@ -11,20 +11,21 @@ export class AppError extends Error {
 	constructor({
 		description,
 		httpCode,
+		statusCode,
 		isOperational,
 		message,
 	}: {
 		message?: string;
 		httpCode?: StatusCodes;
+		statusCode?: number;
 		description?: string;
 		isOperational?: boolean;
 	}) {
 		super(description);
-
 		Object.setPrototypeOf(this, new.target.prototype); // restore prototype chain
 
-		this.message = message || getReasonPhrase(httpCode || 500);
-		this.httpCode = httpCode;
+		this.httpCode = httpCode || statusCode;
+		this.message = message || getReasonPhrase(this.httpCode || 500);
 		this.isOperational = isOperational;
 		this.description = description;
 

@@ -1,8 +1,8 @@
 import { StorageService } from "services/storage";
 import { createErrorResponse, createSuccessResponse } from "utils/http";
-import { ENV_VARS } from "config/env";
 import { StorageUploadArgs } from "type/services/storage";
 import { IController } from "types/express";
+import { AppError } from "utils/error";
 
 type UploadBody = StorageUploadArgs;
 
@@ -25,18 +25,12 @@ export const upload: IController = async (req, res) => {
 	}
 };
 
-export const getPublic: IController = async (req, res) => {
+export const get: (dirname?: string) => IController = (dirname) => (req, res, next) => {
 	const id = req.params.id;
 
-	const file = `${ENV_VARS.FILES_BASE_DIR_PUBLIC}/${id}`;
+	const file = `${dirname}/${id}`;
 
-	res.sendFile(file);
-};
-
-export const getPrivate: IController = async (req, res) => {
-	const id = req.params.id;
-
-	const file = `${ENV_VARS.FILES_BASE_DIR_PRIVATE}/${id}`;
-
-	res.sendFile(file);
+	res.sendFile(file, (err) => {
+		next(new AppError(err));
+	});
 };
