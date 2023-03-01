@@ -13,7 +13,20 @@ export class StorageService {
 				: ENV_VARS.FILES_BASE_DIR_PRIVATE;
 			const path = `${basedir}/${filename}`;
 			await fs.promises.writeFile(path, file.base64, "base64");
-			return filename;
+			return `${file.public ? "" : "private/"}${filename}`;
+		} catch (err) {
+			return Promise.reject(new UnknownError(err));
+		}
+	};
+
+	static bulkUpload = async (files: StorageUploadArgs[]) => {
+		const filesPath: string[] = [];
+		try {
+			for await (const file of files) {
+				const path = await this.upload(file);
+				filesPath.push(path);
+			}
+			return filesPath;
 		} catch (err) {
 			return Promise.reject(new UnknownError(err));
 		}
