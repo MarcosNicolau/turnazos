@@ -34,3 +34,11 @@ jobs:
         run: npm run build
       - name: "Version"
         run: npx semantic-release
+      - name: "GitHub container registry login"
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: "Docker Publish"
+        run: "npm run docker"
