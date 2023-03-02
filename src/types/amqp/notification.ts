@@ -1,17 +1,32 @@
 import { Message } from "whatsapp-business";
 
-export type NotificationVia = "email" | "whatsapp" | "sms";
+export type NotificationVia = "email" | "whatsapp" | "sms" | "app";
 
 export type NotificationConsumerMsg = {
 	via: {
-		whatsapp?: Message;
-		//We don't support email notifications yet, but this is a little how it should look like
+		whatsapp?: {
+			content: Message;
+			type?: "otp_code" | "authentication";
+		};
 		email?: {
-			title: string;
-			subject: string;
-			body: string;
-			to: string[];
+			admin_fail_warning?: {
+				err: string;
+			};
+			business_request_verification?: {
+				business_id: number;
+				business_name: string;
+				files: string[];
+			};
+			other?: {
+				to: string[];
+				text: string;
+				subject: string;
+			};
+		};
+		//We don't support app notifications yet, but the service will store the user information with its id
+		app?: {
+			user_id: string;
+			type?: "business_verification_status";
 		};
 	};
-	type: "otp_code" | "authentication" | "admin_fail_warning";
 };

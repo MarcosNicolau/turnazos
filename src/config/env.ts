@@ -7,4 +7,7 @@ export const ENV_VARS = {
 	WABA_ACCOUNT_ID: process.env.WABA_ACCOUNT_ID,
 	WABA_PHONE_ID: process.env.WABA_PHONE_ID,
 	WABA_API_TOKEN: process.env.WABA_API_TOKEN,
+	SENDGRID_API_KEY: process.env.SENDGRID_API_KEY,
+	EMAIL_FROM: process.env.EMAIL_FROM,
+	ADMIN_EMAILS: (process.env.EMAIL_FROM || "").split(", "),
 } as const;
