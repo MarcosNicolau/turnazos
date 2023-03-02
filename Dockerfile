@@ -1,5 +1,7 @@
 # stage 1 building the code
-FROM node:16-alpine AS builder
+FROM node:19-alpine3.16 AS builder
+
+USER root
 
 # Create app directory
 WORKDIR /app
@@ -21,7 +23,7 @@ RUN npm run build
 RUN npm prune --production
 
 # stage 2
-FROM node:16-alpine AS bundler
+FROM node:19-alpine3.16 AS bundler
 
 USER node
 
@@ -37,7 +39,7 @@ COPY --from=builder --chown=node:node /app/tsconfig.json ./tsconfig.json
 COPY --from=builder --chown=node:node /app/package.json ./package.json 
 
 # Bundle app source
-ARG PORT=8080
+ARG PORT=8000
 ENV PORT=${PORT}
 
 EXPOSE ${PORT}
