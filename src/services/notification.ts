@@ -2,7 +2,6 @@ import { Notification } from "types/services/notification";
 import { ENV_VARS } from "config/env";
 import { LoggerService } from "services/logger";
 import { emailClient } from "config/sendgrid";
-import { EMAIL_TEMPLATES } from "constants/notification";
 import { whatsappClient } from "config/whatsapp";
 
 type SendViaNotification<Via extends keyof Notification["via"]> = {
@@ -31,25 +30,17 @@ export class NotificationService {
 	};
 	static sendEmailNotification = async ({ message }: SendViaNotification<"email">) => {
 		const from = ENV_VARS.EMAIL_FROM || "";
+		const to = message.to === "admin" ? ENV_VARS.ADMIN_EMAILS : message.to;
+		const { subject, template, text } = message;
 		try {
-			if (message.admin_fail_warning) {
-				const { err } = message.admin_fail_warning;
-				const { templateId, to } = EMAIL_TEMPLATES.admin_fail_warning;
-				await emailClient.send({
-					from,
-					to,
-					templateId,
-					dynamicTemplateData: { err },
-				});
-			}
-			if (message.business_request_verification) {
-				const data = message.business_request_verification;
-				const { templateId, to } = EMAIL_TEMPLATES.business_requested_verification;
-				await emailClient.send({ from, to, templateId, dynamicTemplateData: data });
-			}
-			if (message.other) {
-				await emailClient.send({ from, ...message.other });
-			}
+			await emailClient.send({
+				from,
+				to,
+				text: text || "",
+				subject: subject || "",
+				templateId: template?.id,
+				dynamicTemplateData: template?.data,
+			});
 		} catch (err) {
 			return Promise.reject(err);
 		}

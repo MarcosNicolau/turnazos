@@ -6,27 +6,22 @@ export type NotificationConsumerMsg = {
 	via: {
 		whatsapp?: {
 			content: Message;
-			type?: "otp_code" | "authentication";
+			template?: string;
 		};
 		email?: {
-			admin_fail_warning?: {
-				err: string;
-			};
-			business_request_verification?: {
-				business_id: number;
-				business_name: string;
-				files: string[];
-			};
-			other?: {
-				to: string[];
-				text: string;
-				subject: string;
+			to: string[] | "admin";
+			text?: string;
+			subject?: string;
+			template?: {
+				id: string;
+				data: Record<string | number, any>;
 			};
 		};
 		//We don't support app notifications yet, but the service will store the user information with its id
 		app?: {
 			user_id: string;
-			type?: "business_verification_status";
+			header: string;
+			body: string;
 		};
 	};
 };
