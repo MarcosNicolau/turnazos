@@ -15,6 +15,7 @@
 		"prisma:migrate": "prisma migrate dev",
 		"prisma:rest": "prisma migrate reset",
 		"prisma:watch": "nodemon -w ./prisma -e .prisma -x 'yarn run prisma:generate'",
+		"prisma": "yarn run prisma:generate && yarn run prisma:migrate",
 		"dev": "yarn docker:local-compose && concurrently 'yarn run prisma:watch' 'yarn run server:watch'",
 		"build": "tsc",
 		"prepare": "husky install",

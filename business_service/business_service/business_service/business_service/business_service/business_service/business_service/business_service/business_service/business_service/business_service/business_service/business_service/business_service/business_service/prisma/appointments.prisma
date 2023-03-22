@@ -1,0 +1,46 @@
+import { Service } from "service"
+import { Employee } from "employee"
+import { Client } from "client"
+import { Business } from "business"
+import { Days, TimeOfTheDay } from "utils"
+
+model Appointment {
+   id Int @unique @id @default(autoincrement())
+   day Days
+   created_at DateTime @default(now())
+   arrive_time DateTime
+   leave_time DateTime
+   time_of_the_day TimeOfTheDay
+   pays_with String
+   comment String
+   status AppointmentStatus
+   client_did_not_go Boolean
+   canceled_by_business Boolean
+   canceled_by_client Boolean
+   client_arrived_late Boolean
+   client_updated_time Boolean
+   appointment_updated AppointmentUpdated?
+   service_id Int
+   service Service @relation(fields: [service_id], references: [id], onDelete: Cascade)
+   employee_id String
+   employee Employee @relation(fields: [employee_id], references: [id])
+   client_id Int
+   client Client @relation(fields: [client_id], references: [id], onDelete: Cascade)
+   business_id String
+   business Business @relation(fields: [business_id], references: [id], onDelete: Cascade)
+}
+
+model AppointmentUpdated {
+    id Int @unique @id @default(autoincrement())
+    old_arrive_time DateTime
+    old_leave_time DateTime
+    appointment_id Int @unique
+    appointment Appointment @relation(fields: [appointment_id], references: [id])
+}
+
+enum AppointmentStatus {
+    CANCELED
+    PENDING
+    ACTIVE
+}
+

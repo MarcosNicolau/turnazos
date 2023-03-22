@@ -1,0 +1,37 @@
+import { Business } from "./business"
+import { Service } from "./service"
+import { Appointment } from "appointments"
+import { Days } from "utils"
+
+model Employee {
+    id String @id @default(uuid())
+    name String
+    avatar_url String
+    services Service[]
+    appointments Appointment[]
+    schedules EmployeeSchedule[]
+    business_id String
+    business Business @relation(fields: [business_id], references: [id], onDelete: Cascade)
+}
+
+model EmployeeSchedule {
+    id Int @id @default(autoincrement())
+    day Days?
+    month Int?
+    day_number Int?
+    date DateTime?
+    intervals EmployeeScheduleInterval[]
+    employee_id String
+    employee Employee @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+    @@unique([employee_id, day])
+    @@unique([employee_id, day_number, month])
+}
+
+
+model EmployeeScheduleInterval {
+    id Int @id @default(autoincrement())
+    starts_at Float
+    ends_at Float
+    employee_schedule_id Int
+    employee_schedual EmployeeSchedule @relation(fields: [employee_schedule_id], references: [id], onDelete: Cascade)
+}
