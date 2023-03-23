@@ -7,6 +7,7 @@ import { PaymentMethods } from "payment"
 model Service {
     id Int @id @default(autoincrement()) @unique
     name String
+    description String
     time_in_minutes Float
     price Float
     price_currency String
