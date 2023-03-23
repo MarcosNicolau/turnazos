@@ -2,6 +2,7 @@ import { Business } from "./business"
 import { Employee } from "employee"
 import { Appointment } from "appointments"
 import { Days, Days } from "utils"
+import { PaymentMethods } from "payment"
 
 model Service {
     id Int @id @default(autoincrement()) @unique
@@ -16,6 +17,8 @@ model Service {
     max_appointments_anticipation_in_days Float
     min_appointments_anticipation_in_days Float
     max_concurrent_appointments Float
+    payment_methods_id Int @unique
+    payment_methods PaymentMethods @relation(fields: [payment_methods_id], references: [id], onDelete: Cascade) 
     schedules ServiceSchedule[]
     employees Employee[]
     appointments Appointment[]

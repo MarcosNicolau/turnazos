@@ -62,8 +62,6 @@ model Business {
     settings Settings @relation(fields: [settings_id], references: [id], onDelete: Cascade)
     location_id Int @unique
     location Location @relation(fields: [location_id], references: [id], onDelete: Cascade)
-    payment_methods_id Int @unique
-    payment_methods PaymentMethods @relation(fields: [payment_methods_id], references: [id], onDelete: Cascade) 
     branch_id Int @unique
     branch Branch @relation(fields: [branch_id], references: [id], onDelete: Cascade)
     clients Client[]
@@ -156,7 +154,7 @@ model PaymentMethods {
     mercado_pago Boolean
     cvu Boolean
     other_payments OtherPayments[]
-    business Business?
+    service Service?
 }
 
 model OtherPayments {
@@ -190,14 +188,18 @@ model Gallery {
 model Service {
     id Int @id @default(autoincrement()) @unique
     name String
+    time_in_minutes Float
     price Float
     price_currency String
     is_discount Boolean
     discount_price Float
+    requires_business_confirmation Boolean
     appointments_frequency_in_minutes Float
     max_appointments_anticipation_in_days Float
     min_appointments_anticipation_in_days Float
     max_concurrent_appointments Float
+    payment_methods_id Int @unique
+    payment_methods PaymentMethods @relation(fields: [payment_methods_id], references: [id], onDelete: Cascade) 
     schedules ServiceSchedule[]
     employees Employee[]
     appointments Appointment[]

@@ -16,8 +16,6 @@ model Business {
     settings Settings @relation(fields: [settings_id], references: [id], onDelete: Cascade)
     location_id Int @unique
     location Location @relation(fields: [location_id], references: [id], onDelete: Cascade)
-    payment_methods_id Int @unique
-    payment_methods PaymentMethods @relation(fields: [payment_methods_id], references: [id], onDelete: Cascade) 
     branch_id Int @unique
     branch Branch @relation(fields: [branch_id], references: [id], onDelete: Cascade)
     clients Client[]
