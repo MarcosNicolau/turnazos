@@ -22,6 +22,7 @@ model Business {
     services Service[]
     employees Employee[]
     appointments Appointment[]
+    @@unique([id, user_id])
 }
 
 //This table will have all the references for all the business branches. Every branch will point to this table
