@@ -11,6 +11,7 @@ export type UpdateServiceArgs = Partial<Omit<Service, "business_id" | "id" | "pa
 //====Service schedule types====
 export type CreateSchedulesArgs = {
 	service_id: number;
+	business_id: string;
 	schedules: (Omit<Partial<ServiceSchedule>, "id" | "service_id"> & {
 		intervals: Omit<ServiceScheduleInterval, "id" | "service_schedule_id">[];
 	})[];

@@ -4,44 +4,75 @@ import {
 	CreateSchedulesArgs,
 	UpdateServiceScheduleArgs,
 } from "types/services/business/services";
-import { intervalsInvalidError, verifyIntervals } from "./helpers";
-import { DocumentNotFoundError, UnknownError } from "utils/errors";
+import { getBusinessServiceSchedule, intervalsInvalidError, verifyIntervals } from "./helpers";
+import { UnknownError } from "utils/errors";
 import { prisma } from "config/prisma";
 
 export class BusinessServiceScheduleService {
+	business_id: string;
 	schedule_id: number;
+	service_id: number;
 
-	constructor({ schedule_id }: { schedule_id: number }) {
+	constructor({
+		schedule_id,
+		business_id,
+		service_id,
+	}: {
+		schedule_id: number;
+		business_id: string;
+		service_id: number;
+	}) {
 		this.schedule_id = schedule_id;
+		this.business_id = business_id;
+		this.service_id = service_id;
 	}
 
-	static createSchedule = async ({ schedules, service_id }: CreateSchedulesArgs) => {
+	static createSchedule = async ({ schedules, service_id, business_id }: CreateSchedulesArgs) => {
 		const areIntervalsValid = schedules.every((schedule) =>
 			verifyIntervals(schedule.intervals)
 		);
 		if (!areIntervalsValid) return Promise.reject(intervalsInvalidError);
-		const service = await prisma.service.findUnique({ where: { id: service_id } });
-		//Verify that the service actually exists
-		if (!service) return Promise.reject(new DocumentNotFoundError());
-		//Create the schedule
-		for await (const { intervals, ...data } of schedules) {
-			await prisma.serviceSchedule.create({
-				data: {
-					...data,
-					service: { connect: { id: service.id } },
-					intervals: { createMany: { data: intervals } },
+		await prisma.business.update({
+			data: {
+				services: {
+					update: {
+						data: {
+							schedules: {
+								create: schedules.map(({ intervals, ...schedule }) => ({
+									...schedule,
+									intervals: { create: intervals },
+								})),
+							},
+						},
+						where: { id: service_id },
+					},
 				},
-			});
-		}
+			},
+			where: { id: business_id },
+		});
+		return;
 	};
 
 	updateSchedule = async (data: UpdateServiceScheduleArgs) => {
 		try {
-			const res = await prisma.serviceSchedule.update({
-				data,
-				where: { id: this.schedule_id },
+			await prisma.business.update({
+				data: {
+					services: {
+						update: {
+							data: {
+								schedules: {
+									update: {
+										data,
+										where: { id: this.schedule_id },
+									},
+								},
+							},
+							where: { id: this.service_id },
+						},
+					},
+				},
+				where: { id: this.business_id },
 			});
-			return res;
 		} catch (err) {
 			return Promise.reject(err);
 		}
@@ -49,8 +80,17 @@ export class BusinessServiceScheduleService {
 
 	deleteSchedule = async () => {
 		try {
-			const res = await prisma.serviceSchedule.delete({ where: { id: this.schedule_id } });
-			return res;
+			await prisma.business.update({
+				data: {
+					services: {
+						update: {
+							data: { schedules: { delete: { id: this.schedule_id } } },
+							where: { id: this.service_id },
+						},
+					},
+				},
+				where: { id: this.business_id },
+			});
 		} catch (err) {
 			return Promise.reject(new UnknownError(err));
 		}
@@ -58,13 +98,12 @@ export class BusinessServiceScheduleService {
 
 	createInterval = async (intervals: CreateIntervalArgs) => {
 		try {
-			//Get all the intervals to verify
-			const serviceSchedule = await prisma.serviceSchedule.findUnique({
-				include: { intervals: true },
-				where: { id: this.schedule_id },
+			const schedule = await getBusinessServiceSchedule({
+				schedule_id: this.schedule_id,
+				business_id: this.business_id,
+				service_id: this.service_id,
 			});
-			if (!serviceSchedule) return Promise.reject(new DocumentNotFoundError());
-			const areIntervalsValid = verifyIntervals(intervals);
+			const areIntervalsValid = verifyIntervals([...schedule.intervals, ...intervals]);
 			if (!areIntervalsValid) return Promise.reject(intervalsInvalidError);
 			const res = await prisma.serviceSchedule.update({
 				data: { intervals: { createMany: { data: intervals } } },
@@ -78,15 +117,14 @@ export class BusinessServiceScheduleService {
 
 	updateInterval = async ({ id, ...data }: UpdateIntervalArgs) => {
 		try {
-			//Get all the intervals to verify
-			const serviceSchedule = await prisma.serviceSchedule.findUnique({
-				include: { intervals: true },
-				where: { id: this.schedule_id },
+			const schedule = await getBusinessServiceSchedule({
+				schedule_id: this.schedule_id,
+				business_id: this.business_id,
+				service_id: this.service_id,
 			});
-			if (!serviceSchedule) return Promise.reject(new DocumentNotFoundError());
 			const areIntervalsValid = verifyIntervals([
-				//Remove the one to update
-				...serviceSchedule.intervals.filter((interval) => interval.id === id),
+				//Filter the one to update
+				...schedule.intervals.filter((interval) => interval.id === id),
 				data,
 			]);
 			if (!areIntervalsValid) return Promise.reject(intervalsInvalidError);
@@ -101,10 +139,26 @@ export class BusinessServiceScheduleService {
 		}
 	};
 
-	static deleteInterval = async (id: number) => {
+	deleteInterval = async (id: number) => {
 		try {
-			const res = await prisma.serviceScheduleInterval.delete({ where: { id } });
-			return res;
+			await prisma.business.update({
+				data: {
+					services: {
+						update: {
+							data: {
+								schedules: {
+									update: {
+										data: { intervals: { delete: { id } } },
+										where: { id: this.schedule_id },
+									},
+								},
+							},
+							where: { id: this.service_id },
+						},
+					},
+				},
+				where: { id: this.business_id },
+			});
 		} catch (err) {
 			return Promise.reject(new UnknownError());
 		}

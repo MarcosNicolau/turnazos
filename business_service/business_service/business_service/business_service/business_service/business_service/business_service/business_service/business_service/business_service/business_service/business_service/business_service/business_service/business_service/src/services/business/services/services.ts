@@ -6,21 +6,26 @@ import { getOffset } from "utils/pagination";
 
 export class BusinessServicesService {
 	service_id: number;
+	business_id: string;
 
-	constructor({ service_id }: { service_id: number }) {
+	constructor({ service_id, business_id }: { service_id: number; business_id: string }) {
 		this.service_id = service_id;
+		this.business_id = business_id;
 	}
 
 	static create = async ({ payment_methods, business_id, ...data }: CreateServiceArgs) => {
 		try {
-			const res = await prisma.service.create({
+			await prisma.business.update({
 				data: {
-					...data,
-					business: { connect: { id: business_id } },
-					payment_methods: { create: payment_methods },
+					services: {
+						create: {
+							...data,
+							payment_methods: { create: payment_methods },
+						},
+					},
 				},
+				where: { id: business_id },
 			});
-			return res;
 		} catch (err) {
 			return Promise.reject(new UnknownError(err));
 		}
@@ -35,7 +40,7 @@ export class BusinessServicesService {
 				where: { id: business_id },
 			});
 			if (!res) return Promise.reject(new DocumentNotFoundError());
-			return res;
+			return res.services;
 		} catch (err) {
 			return Promise.reject(new UnknownError(err));
 		}
@@ -43,15 +48,21 @@ export class BusinessServicesService {
 
 	get = async () => {
 		try {
-			const service = await prisma.service.findUnique({
-				where: { id: this.service_id },
-				include: {
-					schedules: { include: { intervals: true } },
-					employees: { select: { id: true } },
+			const business = await prisma.business.findUnique({
+				select: {
+					services: {
+						include: {
+							schedules: { include: { intervals: true } },
+							payment_methods: { include: { other_payments: true } },
+						},
+						where: { id: this.service_id },
+					},
 				},
+				where: { id: this.business_id },
 			});
-			if (!service) return Promise.reject(new DocumentNotFoundError());
-			return service;
+			if (!business || !business.services[0])
+				return Promise.reject(new DocumentNotFoundError());
+			return business.services[0];
 		} catch (err) {
 			return Promise.reject(new UnknownError(err));
 		}
@@ -59,22 +70,28 @@ export class BusinessServicesService {
 
 	getServiceAppointmentHistory = async (pagination: Pagination) => {
 		try {
-			const service = await prisma.service.findUnique({
+			const business = await prisma.business.findUnique({
 				select: {
-					appointments: {
-						include: {
-							employee: { select: { id: true } },
-							appointment_updated: true,
-							client: true,
+					services: {
+						select: {
+							appointments: {
+								include: {
+									employee: { select: { id: true } },
+									appointment_updated: true,
+									client: true,
+								},
+								skip: getOffset(pagination),
+								take: pagination.size,
+							},
 						},
-						skip: getOffset(pagination),
-						take: pagination.size,
+						where: { id: this.service_id },
 					},
 				},
-				where: { id: this.service_id },
+				where: { id: this.business_id },
 			});
-			if (!service) return Promise.reject(new DocumentNotFoundError());
-			return service.appointments;
+			if (!business || !business.services[0])
+				return Promise.reject(new DocumentNotFoundError());
+			return business.services[0].appointments;
 		} catch (err) {
 			return Promise.reject(new UnknownError(err));
 		}
@@ -82,11 +99,10 @@ export class BusinessServicesService {
 
 	update = async (data: UpdateServiceArgs) => {
 		try {
-			const service = await prisma.service.update({
-				data,
-				where: { id: this.service_id },
+			await prisma.business.update({
+				data: { services: { update: { data, where: { id: this.service_id } } } },
+				where: { id: this.business_id },
 			});
-			return service;
 		} catch (err) {
 			return Promise.reject(new UnknownError(err));
 		}
@@ -94,8 +110,10 @@ export class BusinessServicesService {
 
 	delete = async () => {
 		try {
-			const service = await prisma.service.delete({ where: { id: this.service_id } });
-			return service;
+			await prisma.business.update({
+				data: { services: { delete: { id: this.service_id } } },
+				where: { id: this.business_id },
+			});
 		} catch (err) {
 			return Promise.reject(new UnknownError(err));
 		}
