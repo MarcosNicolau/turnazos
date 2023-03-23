@@ -3,7 +3,9 @@ import { NavigationService } from "services/navigation";
 import { CoordinateLocation } from "type/location";
 import { AppError } from "utils/errors";
 
-const createLocation = async (location: CoordinateLocation): Promise<Omit<Location, "id">> => {
+export const createLocation = async (
+	location: CoordinateLocation
+): Promise<Omit<Location, "id">> => {
 	try {
 		const locationDetails = await NavigationService.reverseGeocoding(location);
 		if (!locationDetails)
@@ -23,5 +25,3 @@ const createLocation = async (location: CoordinateLocation): Promise<Omit<Locati
 		return Promise.reject(err);
 	}
 };
-
-export { createLocation };
