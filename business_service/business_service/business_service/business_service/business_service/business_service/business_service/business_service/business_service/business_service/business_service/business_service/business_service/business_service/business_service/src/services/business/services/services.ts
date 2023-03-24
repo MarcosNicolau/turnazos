@@ -113,6 +113,26 @@ export class BusinessServicesService implements Constructor {
 		}
 	};
 
+	deletePaymentMethod = async (id: string) => {
+		try {
+			await prisma.business.update({
+				data: {
+					services: {
+						update: {
+							data: {
+								payment_methods: { update: { other_payments: { delete: { id } } } },
+							},
+							where: { id: this.service_id },
+						},
+					},
+				},
+				where: { id: this.business_id },
+			});
+		} catch (err) {
+			return Promise.reject(new UnknownError(err));
+		}
+	};
+
 	delete = async () => {
 		try {
 			await prisma.business.update({
