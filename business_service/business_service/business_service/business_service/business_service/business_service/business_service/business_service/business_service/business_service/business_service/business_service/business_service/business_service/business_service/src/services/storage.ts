@@ -5,6 +5,7 @@ import { FileStorageAPIResponse, FileStorageUploadArgs } from "type/services/fil
 export class FileStorageService {
 	static upload = async (files: FileStorageUploadArgs[]) => {
 		try {
+			if (!files.length) return [];
 			const res = await axios.post<FileStorageAPIResponse>(
 				`${ENV_VARS.STORAGE_SERVICE_URL}/storage`,
 				{

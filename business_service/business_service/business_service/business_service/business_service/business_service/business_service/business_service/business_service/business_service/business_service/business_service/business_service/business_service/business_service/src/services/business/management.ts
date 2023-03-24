@@ -3,6 +3,8 @@ import { createLocation } from "./helpers";
 import { CreateBusinessArgs, UpdateBusinessArgs } from "type/services/business/management";
 import { DocumentNotFoundError, UnknownError } from "utils/errors";
 import { Location } from "@prisma/client";
+import { FileStorageService } from "services/storage";
+import { insertIf } from "utils/arrays";
 
 interface Constructor {
 	business_id: string;
@@ -14,9 +16,21 @@ export class BusinessManagementService implements Constructor {
 		this.business_id = business_id;
 	}
 
-	static create = async ({ location: coordinates, profile, user_id }: CreateBusinessArgs) => {
+	static create = async ({
+		location: coordinates,
+		profile: { logo, cover, ...profile },
+		user_id,
+	}: CreateBusinessArgs) => {
 		try {
 			const location = await createLocation(coordinates);
+			const [logo_url = "", cover_url = ""] = await FileStorageService.upload([
+				...insertIf(!!logo, [
+					{ base64: logo?.base64, mimetype: logo?.mimetype, public: true },
+				]),
+				...insertIf(!!cover, [
+					{ base64: cover?.base64, mimetype: cover?.mimetype, public: true },
+				]),
+			]);
 			await prisma.business.create({
 				data: {
 					user_id,
@@ -27,6 +41,8 @@ export class BusinessManagementService implements Constructor {
 					profile: {
 						create: {
 							...profile,
+							logo_url,
+							cover_url,
 							rate: 0,
 						},
 					},
@@ -40,7 +56,11 @@ export class BusinessManagementService implements Constructor {
 		}
 	};
 
-	createBranch = async ({ location: coordinates, profile, user_id }: CreateBusinessArgs) => {
+	createBranch = async ({
+		location: coordinates,
+		profile: { logo, cover, ...profile },
+		user_id,
+	}: CreateBusinessArgs) => {
 		try {
 			//Get the business branch to connect the relation on the new business branch
 			const business = await prisma.business.findUnique({
@@ -48,6 +68,14 @@ export class BusinessManagementService implements Constructor {
 				select: { branch: true },
 			});
 			if (!business) return Promise.reject(new DocumentNotFoundError());
+			const [logo_url = "", cover_url = ""] = await FileStorageService.upload([
+				...insertIf(!!logo, [
+					{ base64: logo?.base64, mimetype: logo?.mimetype, public: true },
+				]),
+				...insertIf(!!cover, [
+					{ base64: cover?.base64, mimetype: cover?.mimetype, public: true },
+				]),
+			]);
 			const location = await createLocation(coordinates);
 			await prisma.business.create({
 				data: {
@@ -57,6 +85,8 @@ export class BusinessManagementService implements Constructor {
 					profile: {
 						create: {
 							...profile,
+							logo_url,
+							cover_url,
 							rate: 0,
 						},
 					},
@@ -102,12 +132,32 @@ export class BusinessManagementService implements Constructor {
 		}
 	};
 
-	update = async ({ location: coordinates, profile }: UpdateBusinessArgs) => {
+	update = async ({ location: coordinates, profile = {} }: UpdateBusinessArgs) => {
 		try {
 			let location: Omit<Location, "id"> | undefined;
 			if (coordinates) location = await createLocation(coordinates);
+			const { logo, cover, ...profileData } = profile;
+			const [logo_url, cover_url] = await FileStorageService.upload([
+				...insertIf(!!logo, [
+					{
+						base64: logo?.base64,
+						mimetype: logo?.mimetype,
+						public: true,
+					},
+				]),
+				...insertIf(!!profile?.cover, [
+					{
+						base64: cover?.base64,
+						mimetype: cover?.mimetype,
+						public: true,
+					},
+				]),
+			]);
 			await prisma.business.update({
-				data: { location: { update: location }, profile: { update: profile } },
+				data: {
+					location: { update: location },
+					profile: { update: { ...profileData, logo_url, cover_url } },
+				},
 				where: { id: this.business_id },
 			});
 		} catch (err) {
