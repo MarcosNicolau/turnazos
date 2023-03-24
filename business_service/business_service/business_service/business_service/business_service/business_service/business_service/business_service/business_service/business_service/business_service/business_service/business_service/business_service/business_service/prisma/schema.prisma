@@ -140,8 +140,8 @@ model Location {
     suburb String
     street String
     number Int
-    lon Int
-    lat Int
+    lon Float
+    lat Float
     business Business?
 }
 
