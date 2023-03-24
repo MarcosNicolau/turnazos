@@ -7,8 +7,6 @@ export type CreateBusinessArgs = {
 	location: CoordinateLocation;
 };
 
-export type CreateBranchArgs = Omit<CreateBusinessArgs, "user_id">;
-
 export type UpdateBusinessArgs = {
 	location?: CoordinateLocation;
 	profile?: Partial<Omit<Profile, "id" | "rate">>;
