@@ -1,4 +1,5 @@
 export type NavigationAPIResponse = {
+	error?: string;
 	place_id: number;
 	license: string;
 	osm_type: "node" | "way" | "relation";

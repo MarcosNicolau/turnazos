@@ -9,6 +9,7 @@ export class NavigationService {
 			const res = await axios.get<NavigationAPIResponse>(
 				`${ENV_VARS.NAVIGATION_SERVICE_URL}/reverse?lon=${lon}&lat=${lat}&format=jsonv2&addressdetails=1&polygon_geojson=1`
 			);
+			if (res.data.error) return Promise.reject(res.data.error);
 			return res.data;
 		} catch (err) {
 			return Promise.reject(err);
