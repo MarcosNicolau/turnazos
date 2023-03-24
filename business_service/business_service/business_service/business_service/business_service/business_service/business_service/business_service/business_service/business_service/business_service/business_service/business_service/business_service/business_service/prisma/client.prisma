@@ -2,7 +2,7 @@ import { Business } from "./business"
 import { Appointment } from "appointments"
 
 model Client {
-    id Int @id @default(autoincrement()) @unique
+    id String @id @default(uuid()) @unique
     name String
     user_id Int
     avatar_url String

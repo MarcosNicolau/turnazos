@@ -4,11 +4,16 @@ import { prisma } from "config/prisma";
 import { Pagination } from "type/pagination";
 import { getOffset } from "utils/pagination";
 
-export class BusinessServicesService {
-	service_id: number;
+interface Constructor {
+	service_id: string;
 	business_id: string;
+}
 
-	constructor({ service_id, business_id }: { service_id: number; business_id: string }) {
+export class BusinessServicesService implements Constructor {
+	service_id;
+	business_id;
+
+	constructor({ service_id, business_id }: Constructor) {
 		this.service_id = service_id;
 		this.business_id = business_id;
 	}

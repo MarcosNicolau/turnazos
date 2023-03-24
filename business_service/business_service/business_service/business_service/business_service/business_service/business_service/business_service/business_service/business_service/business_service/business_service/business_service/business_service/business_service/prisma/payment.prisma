@@ -14,7 +14,7 @@ model PaymentMethods {
 }
 
 model OtherPayments {
-    id Int @id @unique @default(autoincrement())
+    id String @id @unique @default(uuid())
     name String
     payment_id Int
     payment PaymentMethods @relation(fields: [payment_id], references: [id], onDelete: Cascade)

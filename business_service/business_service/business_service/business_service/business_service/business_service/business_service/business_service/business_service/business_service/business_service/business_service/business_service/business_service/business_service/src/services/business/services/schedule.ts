@@ -8,20 +8,18 @@ import { getBusinessServiceSchedule, intervalsInvalidError, verifyIntervals } fr
 import { UnknownError } from "utils/errors";
 import { prisma } from "config/prisma";
 
-export class BusinessServiceScheduleService {
+interface Constructor {
 	business_id: string;
-	schedule_id: number;
-	service_id: number;
+	schedule_id: string;
+	service_id: string;
+}
 
-	constructor({
-		schedule_id,
-		business_id,
-		service_id,
-	}: {
-		schedule_id: number;
-		business_id: string;
-		service_id: number;
-	}) {
+export class BusinessServiceScheduleService implements Constructor {
+	business_id;
+	schedule_id;
+	service_id;
+
+	constructor({ schedule_id, business_id, service_id }: Constructor) {
 		this.schedule_id = schedule_id;
 		this.business_id = business_id;
 		this.service_id = service_id;
@@ -139,7 +137,7 @@ export class BusinessServiceScheduleService {
 		}
 	};
 
-	deleteInterval = async (id: number) => {
+	deleteInterval = async (id: string) => {
 		try {
 			await prisma.business.update({
 				data: {

@@ -13,7 +13,7 @@ datasource db {
 //==================================================================================================
 
 model Appointment {
-   id Int @unique @id @default(autoincrement())
+   id String @unique @id @default(uuid())
    day Days
    created_at DateTime @default(now())
    arrive_time DateTime
@@ -28,11 +28,11 @@ model Appointment {
    client_arrived_late Boolean
    client_updated_time Boolean
    appointment_updated AppointmentUpdated?
-   service_id Int
+   service_id String
    service Service @relation(fields: [service_id], references: [id], onDelete: Cascade)
    employee_id String
    employee Employee @relation(fields: [employee_id], references: [id])
-   client_id Int
+   client_id String
    client Client @relation(fields: [client_id], references: [id], onDelete: Cascade)
    business_id String
    business Business @relation(fields: [business_id], references: [id], onDelete: Cascade)
@@ -42,7 +42,7 @@ model AppointmentUpdated {
     id Int @unique @id @default(autoincrement())
     old_arrive_time DateTime
     old_leave_time DateTime
-    appointment_id Int @unique
+    appointment_id String @unique
     appointment Appointment @relation(fields: [appointment_id], references: [id])
 }
 
@@ -79,7 +79,7 @@ model Branch {
 
 
 model Client {
-    id Int @id @default(autoincrement()) @unique
+    id String @id @default(uuid()) @unique
     name String
     user_id Int
     avatar_url String
@@ -113,7 +113,7 @@ model Employee {
 }
 
 model EmployeeSchedule {
-    id Int @id @default(autoincrement())
+    id String @id @default(uuid())
     day Days?
     month Int?
     day_number Int?
@@ -127,10 +127,10 @@ model EmployeeSchedule {
 
 
 model EmployeeScheduleInterval {
-    id Int @id @default(autoincrement())
+    id String @id @default(uuid())
     starts_at Float
     ends_at Float
-    employee_schedule_id Int
+    employee_schedule_id String
     employee_schedual EmployeeSchedule @relation(fields: [employee_schedule_id], references: [id], onDelete: Cascade)
 }
 model Location {
@@ -159,7 +159,7 @@ model PaymentMethods {
 }
 
 model OtherPayments {
-    id Int @id @unique @default(autoincrement())
+    id String @id @unique @default(uuid())
     name String
     payment_id Int
     payment PaymentMethods @relation(fields: [payment_id], references: [id], onDelete: Cascade)
@@ -180,14 +180,14 @@ model Profile {
 }
 
 model Gallery {
-    id Int @id @default(autoincrement()) @unique
+    id String @id @default(uuid()) @unique
     image_url String
     profile_id Int
     profile Profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)
 }
 
 model Service {
-    id Int @id @default(autoincrement()) @unique
+    id String @id @default(uuid()) @unique
     name String
     description String
     time_in_minutes Float
@@ -211,13 +211,13 @@ model Service {
 
 
 model ServiceSchedule {
-    id Int @id @default(autoincrement())
+    id String @id @default(uuid())
     day Days?
     month Int?
     day_number Int?
     date DateTime?
     intervals ServiceScheduleInterval[]
-    service_id Int
+    service_id String
     service Service @relation(fields: [service_id], references: [id], onDelete: Cascade)
     @@unique([service_id, day])
     @@unique([service_id, day_number, month])
@@ -225,10 +225,10 @@ model ServiceSchedule {
 
 
 model ServiceScheduleInterval {
-    id Int @id @default(autoincrement())
+    id String @id @default(uuid())
     starts_at Float
     ends_at Float
-    service_schedule_id Int
+    service_schedule_id String
     service ServiceSchedule @relation(fields: [service_schedule_id], references: [id], onDelete: Cascade)
 }
 
@@ -241,7 +241,7 @@ model Settings {
 }
 
 model Verification {
-    id Int @id @default(autoincrement()) @unique
+    id String @id @default(uuid()) @unique
     is_verified Boolean
     verification_status String
     documentation_url String

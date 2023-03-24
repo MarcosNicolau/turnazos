@@ -22,7 +22,7 @@ export const verifyIntervals = async (
 export const intervalsInvalidError = new AppError({ httpCode: 400, message: "invalid intervals" });
 
 interface GetBusinessEmployeeScheduleArgs {
-	schedule_id: number;
+	schedule_id: string;
 	employee_id: string;
 	business_id: string;
 }

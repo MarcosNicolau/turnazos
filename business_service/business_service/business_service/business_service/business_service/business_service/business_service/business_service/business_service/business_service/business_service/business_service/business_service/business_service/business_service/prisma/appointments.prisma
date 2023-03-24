@@ -5,7 +5,7 @@ import { Business } from "business"
 import { Days, TimeOfTheDay } from "utils"
 
 model Appointment {
-   id Int @unique @id @default(autoincrement())
+   id String @unique @id @default(uuid())
    day Days
    created_at DateTime @default(now())
    arrive_time DateTime
@@ -20,11 +20,11 @@ model Appointment {
    client_arrived_late Boolean
    client_updated_time Boolean
    appointment_updated AppointmentUpdated?
-   service_id Int
+   service_id String
    service Service @relation(fields: [service_id], references: [id], onDelete: Cascade)
    employee_id String
    employee Employee @relation(fields: [employee_id], references: [id])
-   client_id Int
+   client_id String
    client Client @relation(fields: [client_id], references: [id], onDelete: Cascade)
    business_id String
    business Business @relation(fields: [business_id], references: [id], onDelete: Cascade)
@@ -34,7 +34,7 @@ model AppointmentUpdated {
     id Int @unique @id @default(autoincrement())
     old_arrive_time DateTime
     old_leave_time DateTime
-    appointment_id Int @unique
+    appointment_id String @unique
     appointment Appointment @relation(fields: [appointment_id], references: [id])
 }
 

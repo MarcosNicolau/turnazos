@@ -15,7 +15,7 @@ model Employee {
 }
 
 model EmployeeSchedule {
-    id Int @id @default(autoincrement())
+    id String @id @default(uuid())
     day Days?
     month Int?
     day_number Int?
@@ -29,9 +29,9 @@ model EmployeeSchedule {
 
 
 model EmployeeScheduleInterval {
-    id Int @id @default(autoincrement())
+    id String @id @default(uuid())
     starts_at Float
     ends_at Float
-    employee_schedule_id Int
+    employee_schedule_id String
     employee_schedual EmployeeSchedule @relation(fields: [employee_schedule_id], references: [id], onDelete: Cascade)
 }
