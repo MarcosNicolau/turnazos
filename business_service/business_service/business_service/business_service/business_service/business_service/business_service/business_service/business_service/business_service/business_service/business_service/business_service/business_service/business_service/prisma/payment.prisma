@@ -1,0 +1,21 @@
+import { Service } from "service"
+
+model PaymentMethods {
+    id Int @id @unique @default(autoincrement()) 
+    cash Boolean
+    credit_card Boolean
+    debit_card Boolean
+    cryptocurrency Boolean
+    wire_transfer Boolean
+    mercado_pago Boolean
+    cvu Boolean
+    other_payments OtherPayments[]
+    service Service?
+}
+
+model OtherPayments {
+    id String @id @unique @default(uuid())
+    name String
+    payment_id Int
+    payment PaymentMethods @relation(fields: [payment_id], references: [id], onDelete: Cascade)
+}

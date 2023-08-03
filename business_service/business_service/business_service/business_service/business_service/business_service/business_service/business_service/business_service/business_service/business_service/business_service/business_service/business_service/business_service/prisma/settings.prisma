@@ -1,0 +1,16 @@
+import { Business } from "./business"
+
+model Settings {
+    id Int @id @default(autoincrement()) @unique
+    verification Verification?
+    business Business?
+}
+
+model Verification {
+    id String @id @default(uuid()) @unique
+    is_verified Boolean
+    verification_status String
+    documentation_url String
+    settings_id Int @unique
+    settings Settings @relation(fields: [settings_id], references: [id], onDelete: Cascade)
+}

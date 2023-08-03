@@ -1,0 +1,22 @@
+import { Business } from "./business"
+
+model Profile {
+    id Int @id @default(autoincrement()) @unique
+    name String
+    category String
+    slogan String
+    description String
+    logo_url String
+    cover_url String
+    rate Int
+    cost_level Int
+    gallery Gallery[]
+    business Business?
+}
+
+model Gallery {
+    id String @id @default(uuid()) @unique
+    image_url String
+    profile_id Int
+    profile Profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+}

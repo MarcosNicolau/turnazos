@@ -1,0 +1,17 @@
+enum Days {
+    MONDAY
+    TUESDAY
+    WEDNESDAY
+    THURSDAY
+    FRIDAY
+    SATURDAY
+    SUNDAY
+}
+
+enum TimeOfTheDay {
+    MORNING
+    NOON
+    AFTERNOON
+    EVENING
+    NIGHT
+}
