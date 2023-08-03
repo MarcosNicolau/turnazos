@@ -1,9 +1,9 @@
-import { APIResponse } from "type/api";
+import { APIResponse } from "type/http";
 
-export type FileStorageUploadPayload = {
+export type FileStorageUploadArgs = {
 	base64: string;
 	mimetype: string;
 	public: boolean;
 };
 
-export type FileStorageUploadResponse = APIResponse<string[]>;
+export type FileStorageAPIResponse = APIResponse<string[]>;

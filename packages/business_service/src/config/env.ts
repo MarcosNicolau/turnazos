@@ -14,6 +14,6 @@ export const ENV_VARS = {
 	REDIS_PORT: process.env.REDIS_PORT,
 	RABBIT_MQ_URL: process.env.RABBIT_MQ_URL,
 	NODE_ENV: process.env.NODE_ENV || "dev",
-	FILE_STORAGE_API_URL: process.env.FILE_STORAGE_API_URL,
 	NAVIGATION_SERVICE_URL: process.env.NAVIGATION_SERVICE_URL,
+	STORAGE_SERVICE_URL: process.env.STORAGE_SERVICE_URL,
 } as const;

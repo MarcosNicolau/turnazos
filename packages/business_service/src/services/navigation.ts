@@ -1,7 +1,7 @@
 import { ENV_VARS } from "config/env";
 import axios from "axios";
-import { NavigationAPIResponse } from "type/services/navigation";
-import { CoordinateLocation } from "type/location";
+import { NavigationAPIResponse } from "types/services/navigation";
+import { CoordinateLocation } from "types/location";
 
 export class NavigationService {
 	static reverseGeocoding = async ({ lon, lat }: CoordinateLocation) => {
@@ -9,6 +9,7 @@ export class NavigationService {
 			const res = await axios.get<NavigationAPIResponse>(
 				`${ENV_VARS.NAVIGATION_SERVICE_URL}/reverse?lon=${lon}&lat=${lat}&format=jsonv2&addressdetails=1&polygon_geojson=1`
 			);
+			if (res.data.error) return Promise.reject(res.data.error);
 			return res.data;
 		} catch (err) {
 			return Promise.reject(err);

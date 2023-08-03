@@ -1,4 +1,4 @@
-import { Business } from "./business"
+import { Service } from "service"
 
 model PaymentMethods {
     id Int @id @unique @default(autoincrement()) 
@@ -10,11 +10,11 @@ model PaymentMethods {
     mercado_pago Boolean
     cvu Boolean
     other_payments OtherPayments[]
-    business Business?
+    service Service?
 }
 
 model OtherPayments {
-    id Int @id @unique @default(autoincrement())
+    id String @id @unique @default(uuid())
     name String
     payment_id Int
     payment PaymentMethods @relation(fields: [payment_id], references: [id], onDelete: Cascade)

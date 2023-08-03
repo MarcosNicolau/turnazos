@@ -15,7 +15,7 @@ model Profile {
 }
 
 model Gallery {
-    id Int @id @default(autoincrement()) @unique
+    id String @id @default(uuid()) @unique
     image_url String
     profile_id Int
     profile Profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)

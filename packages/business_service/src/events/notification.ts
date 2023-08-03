@@ -3,7 +3,7 @@ import { Channel } from "amqplib";
 import { EVENTS } from "constants/events";
 import EventEmitter from "events";
 import { LoggerService } from "services/logger";
-import { SendNotificationArgs } from "type/events/notification";
+import { SendNotificationArgs } from "type/events/notifications";
 
 export const notificationEvents = async (eventEmitter: EventEmitter, amqpChannel: Channel) => {
 	try {

@@ -1,31 +1,16 @@
 import { Business } from "./business"
-import { Verification } from "schema"
-import { NotificationPreferences } from "notifications"
 
 model Settings {
     id Int @id @default(autoincrement()) @unique
-    // Can see profile, needs to request before taking an appointment
-    private Boolean
-    notification_preferences_id Int @unique
-    notification_preferences NotificationPreferences @relation(fields: [notification_preferences_id], references: [id])
     verification Verification?
     business Business?
 }
 
-
-
 model Verification {
-    id Int @id @default(autoincrement()) @unique
+    id String @id @default(uuid()) @unique
     is_verified Boolean
     verification_status String
-    documents Document[]
+    documentation_url String
     settings_id Int @unique
     settings Settings @relation(fields: [settings_id], references: [id], onDelete: Cascade)
-}
-
-model Document {
-    id Int @id @default(autoincrement()) @unique
-    url String
-    verification_id Int
-    verification Verification @relation(fields: [verification_id], references: [id], onDelete: Cascade)
 }

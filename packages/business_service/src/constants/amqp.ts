@@ -1,6 +1,6 @@
 export const AMQP = {
 	EXCHANGE: {
-		LOGGER: "logger_exchange",
-		NOTIFICATION: "notification_exchange",
+		LOGGER: "amqp_exchange_logger",
+		NOTIFICATION: "amqp_exchange_notification",
 	},
 };

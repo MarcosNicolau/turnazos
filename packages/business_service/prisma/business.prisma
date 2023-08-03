@@ -3,13 +3,12 @@ import { Settings } from "./settings"
 import { Profile } from "./profile"
 import { Client } from "./client"
 import { PaymentMethods } from "./payment"
-import { Notification } from "./notifications"
-import { Appointments } from "./appointment"
-import { Profile } from "profile"
-import { Business } from "schema"
+import { Service } from "./service"
+import { Employee } from "./employee"
+import { Appointment } from "./appointments"
 
 model Business {
-    id Int @default(autoincrement()) @unique @id
+    id String @id @default(uuid())
     user_id String
     profile_id Int @unique
     profile Profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)
@@ -17,16 +16,18 @@ model Business {
     settings Settings @relation(fields: [settings_id], references: [id], onDelete: Cascade)
     location_id Int @unique
     location Location @relation(fields: [location_id], references: [id], onDelete: Cascade)
-    payment_methods_id Int @unique
-    payment_methods PaymentMethods @relation(fields: [payment_methods_id], references: [id]) 
-    branches_id Int
-    branches Branch @relation(fields: [branches_id], references: [id])
+    branch_id Int @unique
+    branch Branch @relation(fields: [branch_id], references: [id], onDelete: Cascade)
     clients Client[]
-    notifications Notification[]
+    services Service[]
+    employees Employee[]
+    appointments Appointment[]
     @@unique([id, user_id])
 }
 
+//This table will have all the references for all the business branches. Every branch will point to this table
 model Branch {
-    id Int @id @default(autoincrement()) @unique
+    id Int @id @default(autoincrement())
     business Business[]
 }
+
