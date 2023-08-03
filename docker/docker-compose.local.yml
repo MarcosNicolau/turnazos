@@ -1,0 +1,67 @@
+# Run this docker-compose if you are locally going to be developing other service
+volumes:
+    postgres_data:
+    redis_data:
+    storage_data:
+    logger_data:
+
+name: turnazos
+services:
+    redis:
+        image: bitnami/redis
+        restart: always
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - ALLOW_EMPTY_PASSWORD=yes
+        volumes:
+            - redis_data:/bitnami/redis/data
+        ports:
+            - 6378:6378
+    rabbitmq:
+        image: bitnami/rabbitmq:latest
+        restart: always
+        ports:
+            - 15672:15772
+            - 5672:5672
+    postgres:
+        image: postgres
+        restart: always
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=postgres
+            - PGDATA=/var/lib/postgresql/data/pgdata
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        ports:
+            - 5432:5432
+    adminer:
+        image: adminer
+        restart: always
+        depends_on:
+            - postgres
+        ports:
+            - 8080:8080
+    logger:
+        image: ghcr.io/turnazos/logger:latest
+        restart: always
+        environment:
+            - PORT=5000
+            - RABBIT_MQ_URL=amqp://user:bitnami@rabbitmq:5672/
+            - NODE_ENV="dev"
+        volumes:
+            - logger_data:/var/log/turnazos_logger
+        ports:
+            - 5000:5000
+    storage:
+        image: ghcr.io/turnazos/storage:latest
+        restart: always
+        environment:
+            - PORT=5001
+            - UPLOAD_TOKEN=token
+            # ::ffff: is the prefix added to convert an ipv4 address ti an ipv6
+            - ALLOWED_IPS="181.166.136.44, ::ffff:127.0.0.1"
+        volumes:
+            - storage_data:/data/storage
+        ports:
+            - 5001:5001
