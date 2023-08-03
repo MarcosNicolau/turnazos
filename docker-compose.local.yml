@@ -1,0 +1,7 @@
+# Run this docker-compose if you are only going to be working with this service
+services:
+  redis:
+    image: bitnami/rabbitmq
+    ports:
+      - 15672:15672
+      - 5672:5672
