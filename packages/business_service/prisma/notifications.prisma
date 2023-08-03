@@ -1,0 +1,26 @@
+import { Business } from "./business"
+import { Settings } from "settings"
+
+model Notification {
+    id Int @unique @default(autoincrement()) @id
+    type Type
+    subject String
+    title String
+    body String
+    read Boolean
+    created_at DateTime @default(now())
+    business_id Int @unique
+    business Business @relation(fields: [business_id], references: [id]) 
+}
+
+model NotificationPreferences {
+    id Int @id @unique @default(autoincrement())
+    disabled Boolean
+    receive_app_notifications Boolean
+    grant_access Boolean
+    settings Settings?
+}
+
+enum Type {
+    APPOINTMENT_TAKEN
+}

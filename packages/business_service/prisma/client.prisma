@@ -1,0 +1,31 @@
+import { Business } from "./business"
+import { Client } from "schema"
+import { AppointmentItem } from "appointment"
+
+model Client {
+    id Int @default(autoincrement()) @unique
+    user_id String
+    name String
+    avatar_url String
+    rate Int
+    has_priority Boolean
+    has_access Boolean
+    insights_id Int @unique
+    insights ClientInsights @relation(fields: [insights_id], references: [id])
+    business_id Int 
+    business Business @relation(fields: [business_id], references: [id]) 
+    appointments AppointmentItem[]
+    @@id([id, user_id])
+}
+
+model ClientInsights { 
+    id Int @id @default(autoincrement()) @unique
+    first_appointment_taken DateTime @default(now())
+    last_appointment_taken DateTime
+    appointments Int @default(0)
+    appointments_taken Int @default(0)
+    appointments_canceled Int @default(0)
+    appointments_retarded_by_business Int @default(0)
+    times_arrived_late Int @default(0)
+    client Client?
+}

@@ -1,0 +1,11 @@
+import { Business } from "./business"
+
+model Service {
+    id Int @id @default(autoincrement()) @unique
+    name String
+    price String
+    price_currency String
+    business_id Int
+    business Business @relation(fields: [business_id], references: [id], onDelete: Cascade)
+    @@unique([business_id, name], name: "business_id_name")
+}

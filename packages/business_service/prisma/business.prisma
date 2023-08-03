@@ -1,0 +1,32 @@
+import { Location } from "./location"
+import { Settings } from "./settings"
+import { Profile } from "./profile"
+import { Client } from "./client"
+import { PaymentMethods } from "./payment"
+import { Notification } from "./notifications"
+import { Appointments } from "./appointment"
+import { Profile } from "profile"
+import { Business } from "schema"
+
+model Business {
+    id Int @default(autoincrement()) @unique @id
+    user_id String
+    profile_id Int @unique
+    profile Profile @relation(fields: [profile_id], references: [id], onDelete: Cascade)
+    settings_id Int @unique
+    settings Settings @relation(fields: [settings_id], references: [id], onDelete: Cascade)
+    location_id Int @unique
+    location Location @relation(fields: [location_id], references: [id], onDelete: Cascade)
+    payment_methods_id Int @unique
+    payment_methods PaymentMethods @relation(fields: [payment_methods_id], references: [id]) 
+    branches_id Int
+    branches Branch @relation(fields: [branches_id], references: [id])
+    clients Client[]
+    notifications Notification[]
+    @@unique([id, user_id])
+}
+
+model Branch {
+    id Int @id @default(autoincrement()) @unique
+    business Business[]
+}

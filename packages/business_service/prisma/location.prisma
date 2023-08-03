@@ -1,0 +1,14 @@
+import { Business } from "./business"
+
+model Location {
+    id Int @id @default(autoincrement()) @unique
+    country String
+    province String
+    locality String
+    street String
+    number Int
+    lon Float
+    lat Float
+    suburb String
+    business Business?
+}
